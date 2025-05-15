@@ -23,6 +23,13 @@ interface Flight {
   Terminal: string;
 }
 
+interface FlightRowProps {
+  flight: Flight;
+  index?: number;
+  activeTab: 'arrivals' | 'departures';
+}
+
+
 interface ProcessedData {
   departures: Flight[];
   arrivals: Flight[];
@@ -329,11 +336,13 @@ export function FlightTable() {
             ) : activeTab === 'departures' ? (
               filteredDepartures.length > 0 ? (
                 filteredDepartures.map((flight, index) => (
-                  <FlightRow
-                    key={`${flight.ident}-${flight.destination.code}-${index}`}
-                    flight={flight}
-                    index={index}
-                  />
+                <FlightRow
+  key={`${flight.ident}-${flight.destination.code}-${index}`}
+  flight={flight}
+  index={index}
+  activeTab={activeTab}  // Pass activeTab here
+/>
+
                 ))
               ) : (
                 <tr>
@@ -347,11 +356,13 @@ export function FlightTable() {
               )
             ) : filteredArrivals.length > 0 ? (
               filteredArrivals.map((flight, index) => (
-                <FlightRow
-                  key={`${flight.ident}-${flight.origin.code}-${index}`}
-                  flight={flight}
-                  index={index}
-                />
+               <FlightRow
+  key={`${flight.ident}-${flight.destination.code}-${index}`}
+  flight={flight}
+  index={index}
+  activeTab={activeTab}  // Pass activeTab here
+/>
+
               ))
             ) : (
               <tr>

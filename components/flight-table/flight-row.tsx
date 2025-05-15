@@ -22,9 +22,10 @@ interface Flight {
 interface FlightRowProps {
   flight: Flight;
   index?: number;
+  activeTab: 'arrivals' | 'departures';  // Add activeTab prop here
 }
 
-function FlightRowComponent({ flight, index = 0 }: FlightRowProps) {
+function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
   const [blinkClass, setBlinkClass] = useState('');
 
   useEffect(() => {
@@ -71,9 +72,22 @@ function FlightRowComponent({ flight, index = 0 }: FlightRowProps) {
     return '';
   }, [flight.Terminal]);
 
-  const rowBgClass = index % 2 === 0
-    ? 'bg-white dark:bg-gray-900'
-    : 'bg-gray-50 dark:bg-gray-800';
+  // Alternate row colors depending on activeTab
+const rowBgClass = useMemo(() => {
+  if (activeTab === 'arrivals') {
+    return index % 2 === 0
+      ? 'bg-white dark:bg-gray-900'
+      : 'bg-gray-100 dark:bg-[rgba(10,25,70,0.95)]'; // light grey in light mode, very dark blue in dark mode
+  } else {
+    return index % 2 === 0
+      ? 'bg-white dark:bg-gray-900'
+      : 'bg-gray-100 dark:bg-[rgba(35,0,35,0.95)]'; // light grey in light mode, very dark magenta in dark mode
+  }
+}, [activeTab, index]);
+
+
+
+
 
   const blinkStyle = useMemo(() => ({
     padding: '0.25rem 0.75rem',
@@ -97,13 +111,11 @@ function FlightRowComponent({ flight, index = 0 }: FlightRowProps) {
           animation: blink 0.4s infinite;
           animation-fill-mode: both;
         }
-
-        /* Responsive table styles */
         @media (max-width: 640px) {
           tr {
             display: block;
             margin-bottom: 1rem;
-            border-bottom: 2px solid #e5e7eb; /* gray-200 */
+            border-bottom: 2px solid #e5e7eb;
           }
           tr:nth-child(even) {
             background-color: transparent !important;
@@ -113,7 +125,7 @@ function FlightRowComponent({ flight, index = 0 }: FlightRowProps) {
             justify-content: space-between;
             padding: 0.5rem 1rem !important;
             text-align: right;
-            font-size: 0.875rem; /* text-sm */
+            font-size: 0.875rem;
             border-bottom: 1px solid #e5e7eb;
           }
           td:last-child {
@@ -123,20 +135,18 @@ function FlightRowComponent({ flight, index = 0 }: FlightRowProps) {
             content: attr(data-label);
             font-weight: 600;
             text-transform: uppercase;
-            color: #6b7280; /* gray-500 */
+            color: #6b7280;
             flex-basis: 50%;
             text-align: left;
           }
-          /* Pills */
           .inline-flex {
-            font-size: 0.875rem !important; /* text-sm */
+            font-size: 0.875rem !important;
             padding: 0.25rem 0.75rem !important;
             min-width: 2.5rem !important;
             height: 2rem !important;
           }
-          /* Status text */
           .text-xl {
-            font-size: 1rem !important; /* smaller but readable */
+            font-size: 1rem !important;
           }
         }
       `}</style>
