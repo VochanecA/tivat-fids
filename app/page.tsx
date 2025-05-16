@@ -76,8 +76,6 @@ export default function Home() {
     const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
 
     setCurrentDate(`${day}.${month}.${year}, ${dayName}`);
-
-    setLatestUpdate(new Date());
   }, []);
 
   function formatDateTime(date: Date) {
@@ -102,14 +100,18 @@ export default function Home() {
     }
   }
 
+  // This handler will be called from FlightTable after every data fetch
+  function handleDataUpdate() {
+    setLatestUpdate(new Date());
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950">
       <Header />
 
       <main className="flex-1 mx-auto w-[90vw] max-w-full px-4 py-6">
-
-
-        <FlightTable />
+        {/* Pass the callback to FlightTable */}
+        <FlightTable onDataUpdate={handleDataUpdate} />
       </main>
 
       <footer className="border-t border-gray-200 dark:border-gray-800 py-4 px-6 text-sm text-gray-500 dark:text-gray-400">

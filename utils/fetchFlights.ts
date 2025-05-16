@@ -47,6 +47,9 @@ export interface ProcessedData {
 
 const mapStatus = (statusEN: string, status: string): string => {
   if (status === 'C01PRO') return 'Processing';
+  if (status === 'A00CNL') return 'Cancelled';
+  if (status === 'A02DVT') return 'Diverted';
+  if (status === 'A04HLD') return 'Hold';
   if (status === 'C02BRD') return 'Boarding';
   if (status === 'C03LST') return 'Final Call';
   if (status === 'A09DEP') return 'Departed';

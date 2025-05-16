@@ -15,6 +15,9 @@ export const getStatusColor = (status: string): string => {
   if (statusLower.includes('delayed') || statusLower.includes('postponed')) {
     return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
   }
+   if (statusLower.includes('diverted') || statusLower.includes('postponed')) {
+    return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300';
+  }
   
   if (statusLower.includes('cancelled')) {
     return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';

@@ -48,6 +48,8 @@ function getStatusClass(status: string) {
   switch (status) {
     case 'Processing':
       return 'bg-green-800 text-green-50 dark:bg-green-800 dark:text-green-100';
+    case 'Diverted':
+     return 'bg-red-600 text-white dark:bg-red-700 dark:text-red-50';
     case 'Boarding':
       return 'bg-green-100 text-green-800 dark:bg-yellow-400 dark:text-black';
     case 'Final Call':
@@ -83,10 +85,12 @@ function useBlink(status: string) {
   useEffect(() => {
     if (status === 'Processing') setBlinkClass('blink-slow');
     else if (status === 'Delay') setBlinkClass('blink-fast');
+    else if (status === 'Diverted') setBlinkClass('blink-slow');
     else setBlinkClass('');
   }, [status]);
   return blinkClass;
 }
+
 
 // --- Mobile Card ---
 function FlightCard({ flight }: { flight: Flight }) {
@@ -194,7 +198,7 @@ function FlightCard({ flight }: { flight: Flight }) {
 
 
 // --- Main Table Component ---
-export function FlightTable() {
+export function FlightTable({ onDataUpdate }: { onDataUpdate?: () => void }) {
   const [flights, setFlights] = useState<ProcessedData>({
     departures: [],
     arrivals: [],
@@ -205,33 +209,41 @@ export function FlightTable() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchFlightData = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await fetch('/api/fetchFlights');
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const data = await response.json();
-      setFlights(data);
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching flights:', err);
-      setError(
-        `Failed to load flight data: ${
-          err instanceof Error ? err.message : 'Unknown error'
-        }. Please try again.`
-      );
-    } finally {
-      setLoading(false);
+const fetchFlightData = useCallback(async () => {
+  try {
+    setLoading(true);
+    const response = await fetch('/api/fetchFlights');
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
-  }, []);
+    const data = await response.json();
+    setFlights(data);
+    setError(null);
+    if (onDataUpdate) {
+      onDataUpdate(); // <-- Notify parent!
+    }
+  } catch (err) {
+    console.error('Error fetching flights:', err);
+    setError(
+      `Failed to load flight data: ${
+        err instanceof Error ? err.message : 'Unknown error'
+      }. Please try again.`
+    );
+  } finally {
+    setLoading(false);
+  }
+}, [onDataUpdate]);
 
-  useEffect(() => {
+
+
+useEffect(() => {
+  fetchFlightData(); // initial fetch
+  const refreshInterval = setInterval(() => {
     fetchFlightData();
-    const refreshInterval = setInterval(fetchFlightData, 60 * 1000);
-    return () => clearInterval(refreshInterval);
-  }, [fetchFlightData]);
+  }, 60 * 1000);
+  return () => clearInterval(refreshInterval);
+  // eslint-disable-next-line
+}, []); // <--- Only run once on mount!
 
   useEffect(() => {
     const tabInterval = setInterval(() => {

@@ -24,22 +24,45 @@ interface FlightRowProps {
   flight: Flight;
   index?: number;
   activeTab: 'arrivals' | 'departures';
+  isLoading?: boolean; // Add loading status prop
 }
 
-function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
+function FlightRowComponent({ flight, index = 0, activeTab, isLoading = false }: FlightRowProps) {
+  // Keep track of the previous flight data to avoid flickering during updates
+  const [prevFlight, setPrevFlight] = useState<Flight | null>(null);
   const [blinkClass, setBlinkClass] = useState('');
-
+  
+  // Save flight data when it first loads or changes significantly
   useEffect(() => {
-    if (flight.status === 'Processing') {
-      setBlinkClass('blink-slow');
-    } else if (flight.status === 'Delay') {
-      setBlinkClass('blink-fast');
-    } else if (flight.status === 'Earlier') {
-      setBlinkClass('blink-earlier');
-    } else {
-      setBlinkClass('');
+    if (!isLoading && flight) {
+      setPrevFlight(flight);
     }
-  }, [flight.status]);
+  }, [flight, isLoading]);
+  
+  // Use previous flight data during loading to prevent flickering
+  const displayFlight = useMemo(() => {
+    // If we're loading and have previous data, use that
+    if (isLoading && prevFlight) {
+      return prevFlight;
+    }
+    // Otherwise use current flight data
+    return flight;
+  }, [flight, prevFlight, isLoading]);
+
+useEffect(() => {
+  if (displayFlight.status === 'Processing') {
+    setBlinkClass('blink-slow');
+  } else if (displayFlight.status === 'Delay') {
+    setBlinkClass('blink-fast');
+  } else if (displayFlight.status === 'Diverted') {
+    setBlinkClass('blink-fast');
+  } else if (displayFlight.status === 'Earlier') {
+    setBlinkClass('blink-earlier');
+  } else {
+    setBlinkClass('');
+  }
+}, [displayFlight.status]);
+
 
   type StatusKey =
     | 'Processing'
@@ -49,6 +72,7 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
     | 'Arrived'
     | 'Closed'
     | 'Delay'
+    | 'Diverted'
     | 'Earlier'
     | 'On time'
     | 'Cancelled'
@@ -87,6 +111,11 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
         iconClass: 'text-red-500 dark:text-red-400',
         animation: 'blink-fast'
       },
+      'Diverted': {
+        bgClass: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900 dark:text-red-50 dark:border-red-800',
+        iconClass: 'text-red-500 dark:text-red-400',
+        animation: 'blink-slow'
+      },
       'Earlier': {
         bgClass: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-800 dark:text-blue-100 dark:border-blue-700',
         iconClass: 'text-blue-500 dark:text-blue-400',
@@ -110,16 +139,16 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
       }
     };
 
-    const key = (flight.status in configs ? flight.status : 'default') as StatusKey;
+    const key = (displayFlight.status in configs ? displayFlight.status : 'default') as StatusKey;
     return configs[key];
-  }, [flight.status]);
+  }, [displayFlight.status]);
 
   const terminalStyle = useMemo(() => {
-    const t = flight.Terminal?.toUpperCase() || '';
+    const t = displayFlight.Terminal?.toUpperCase() || '';
     if (t === 'T02' || t === 'T2') return 'bg-gradient-to-r from-red-500 to-red-600 text-white';
     if (t === 'T01' || t === 'T1') return 'bg-gradient-to-r from-amber-400 to-amber-500 text-black';
     return 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-800 dark:from-gray-700 dark:to-gray-800 dark:text-gray-200';
-  }, [flight.Terminal]);
+  }, [displayFlight.Terminal]);
 
   const rowBgClass = useMemo(() => {
     const baseClasses = 'transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800';
@@ -134,6 +163,10 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
         : `${baseClasses} bg-indigo-50/30 dark:bg-indigo-950/30`;
     }
   }, [activeTab, index]);
+
+  // Add subtle loading indicator overlay for the row itself if updating
+  const loadingOverlay = isLoading && prevFlight ? 
+    'relative after:absolute after:inset-0 after:bg-gray-100/10 after:dark:bg-gray-800/10' : '';
 
   return (
     <>
@@ -200,23 +233,23 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
         }
       `}</style>
 
-      <tr className={`${rowBgClass} border-b border-gray-200 dark:border-gray-700`}>
+      <tr className={`${rowBgClass} ${loadingOverlay} border-b border-gray-200 dark:border-gray-700`}>
         {/* Airline info column */}
         <td className="py-4 px-4">
           <div className="flex items-center space-x-3">
             <div className="flex-shrink-0">
-              <AirlineLogo name={flight.KompanijaNaziv} icao={flight.KompanijaICAO} />
+              <AirlineLogo name={displayFlight.KompanijaNaziv} icao={displayFlight.KompanijaICAO} />
             </div>
             <div>
-              <div className="text-sm font-medium text-gray-900 dark:text-white">{flight.KompanijaNaziv}</div>
+              <div className="text-sm font-medium text-gray-900 dark:text-white">{displayFlight.KompanijaNaziv}</div>
               <a
-                href={`https://www.flightaware.com/live/flight/${flight.KompanijaICAO}${flight.ident}`}
+                href={`https://www.flightaware.com/live/flight/${displayFlight.KompanijaICAO}${displayFlight.ident}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400 no-underline hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
                 title="View on FlightAware"
               >
-                {flight.Kompanija}{flight.ident}
+                {displayFlight.Kompanija}{displayFlight.ident}
               </a>
             </div>
           </div>
@@ -227,9 +260,9 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
           <div className="flex items-center">
             <MapPin size={20} className="mr-2 text-orange-500 dark:text-orange-400" />
             <div>
-              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{flight.grad}</div>
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{displayFlight.grad}</div>
               <div className="text-sm font-medium text-orange-700/70 dark:text-orange-500/80">
-                {flight.TipLeta === 'O' ? flight.destination.code : flight.origin.code}
+                {displayFlight.TipLeta === 'O' ? displayFlight.destination.code : displayFlight.origin.code}
               </div>
             </div>
           </div>
@@ -241,7 +274,7 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
             <Calendar size={16} className="mr-2 text-blue-500" />
             <div className="text-sm text-gray-700 dark:text-gray-300">
               {/* <div className="font-medium">Scheduled</div> */}
-              <div className="text-xl font-bold">{flight.scheduled_out}</div>
+              <div className="text-xl font-bold">{displayFlight.scheduled_out}</div>
             </div>
           </div>
         </td>
@@ -251,8 +284,8 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
             <Clock size={16} className="mr-2 text-blue-500" />
             <div className="text-sm text-gray-700 dark:text-gray-300">
               {/* <div className="font-medium">Estimated</div> */}
-              <div className={`text-xl font-bold ${flight.estimated_out ? 'blink-earlier' : ''}`}>
-                {flight.estimated_out || ''}
+              <div className={`text-xl font-bold ${displayFlight.estimated_out ? 'blink-earlier' : ''}`}>
+                {displayFlight.estimated_out || ''}
               </div>
             </div>
           </div>
@@ -263,7 +296,7 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
             <ArrowRight size={16} className="mr-2 text-blue-500" />
             <div className="text-sm text-gray-700 dark:text-gray-300">
               {/* <div className="font-medium">Actual</div> */}
-              <div className="text-xl font-bold">{flight.actual_out  ? 'blink-earlier' : ''}</div>
+              <div className="text-xl font-bold">{displayFlight.actual_out || ''}</div>
             </div>
           </div>
         </td>
@@ -271,9 +304,9 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
         {/* Terminal column */}
         <td className="py-4 px-4">
           <div className="flex flex-col items-center justify-center">
-            {flight.Terminal ? (
+            {displayFlight.Terminal ? (
               <div className={`${terminalStyle} px-3 py-1 rounded-full text-sm font-medium flex items-center justify-center w-12`}>
-                {flight.Terminal}
+                {displayFlight.Terminal}
               </div>
             ) : (
               <span className="text-gray-400 dark:text-gray-600">—</span>
@@ -286,7 +319,7 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
           <div className="flex items-center justify-center">
             <DoorClosed size={16} className="mr-1 text-gray-400" />
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {flight.gate || '—'}
+              {displayFlight.gate || '—'}
             </span>
           </div>
         </td>
@@ -294,25 +327,25 @@ function FlightRowComponent({ flight, index = 0, activeTab }: FlightRowProps) {
         {/* Check-in column */}
         <td className="py-4 px-4 text-center">
           <span className="inline-block py-1 px-2 rounded-md bg-gray-100 dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300">
-            {flight.checkIn || '—'}
+            {displayFlight.checkIn || '—'}
           </span>
         </td>
 
         {/* Status column */}
         <td className="py-4 px-4">
           <div className="flex justify-center">
-            {flight.status === 'Earlier' ? (
+            {displayFlight.status === 'Earlier' ? (
               <span 
                 className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-800 dark:text-blue-100 dark:border-blue-700 blink-earlier"
               >
                 <AlertTriangle size={14} className="mr-1" />
-                {flight.status}
+                {displayFlight.status}
               </span>
             ) : (
               <span 
                 className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border ${statusConfig.bgClass} ${statusConfig.animation || ''}`}
               >
-                {flight.status}
+                {displayFlight.status}
               </span>
             )}
           </div>
