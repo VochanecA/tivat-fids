@@ -315,21 +315,32 @@ useEffect(() => {
         </td>
 
         {/* Gate column */}
-        <td className="py-4 px-4">
-          <div className="flex items-center justify-center">
-            <DoorClosed size={16} className="mr-1 text-gray-400" />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {displayFlight.gate || '—'}
-            </span>
-          </div>
-        </td>
+ <td className="py-4 px-4">
+  <div className="flex items-center justify-center">
+    <DoorClosed size={16} className="mr-1 text-blue-500 dark:text-blue-400" />
+    {displayFlight.gate ? (
+      <span className="inline-block px-3 py-1 rounded-full text-xl font-semibold bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700 transition-colors">
+        {displayFlight.gate}
+      </span>
+    ) : (
+      <span className="text-gray-400 dark:text-gray-600">-</span>
+    )}
+  </div>
+</td>
+
 
         {/* Check-in column */}
-        <td className="py-4 px-4 text-center">
-          <span className="inline-block py-1 px-2 rounded-md bg-gray-100 dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300">
-            {displayFlight.checkIn || '—'}
-          </span>
-        </td>
+<td className="py-4 px-4 text-center">
+  {displayFlight.checkIn ? (
+    <span className="inline-block px-3 py-1 rounded-full text-xl font-semibold bg-green-100 text-green-700 border border-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-700 transition-colors">
+      {displayFlight.checkIn}
+    </span>
+  ) : (
+    <span className="text-gray-400 dark:text-gray-600">-</span>
+  )}
+</td>
+
+
 
         {/* Status column */}
         <td className="py-4 px-4">

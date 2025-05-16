@@ -44,6 +44,7 @@ export interface ProcessedData {
   departures: ProcessedFlight[];
   arrivals: ProcessedFlight[];
 }
+const departedArrivedTimers = new Map<string, number>();
 
 const mapStatus = (statusEN: string, status: string): string => {
   if (status === 'C01PRO') return 'Processing';
@@ -63,15 +64,34 @@ const formatTime = (time: string): string => {
   return time.replace(/(\d{2})(\d{2})/, '$1:$2');
 };
 
-const isFlightRecent = (flightTime: string, mapStatus: string): boolean => {
-  // Don't show flights with "Departed" or "Arrived" status
+
+const isFlightRecent = (
+  flightId: string,
+  mapStatus: string
+): boolean => {
+  const TEN_MINUTES = 10 * 60 * 1000;
+  const now = Date.now();
+
   if (mapStatus === 'Departed' || mapStatus === 'Arrived') {
+    const firstDetected = departedArrivedTimers.get(flightId);
+
+    if (!firstDetected) {
+      departedArrivedTimers.set(flightId, now);
+      return true;
+    }
+
+    if (now - firstDetected < TEN_MINUTES) {
+      return true;
+    }
+
+    departedArrivedTimers.delete(flightId);
     return false;
   }
-  
-  // For other statuses, always show the flight
+
   return true;
 };
+
+
 
 const generateFingerprint = (): { platform: string; browser: string } => {
   const platforms = ['Windows NT 10.0; Win64; x64', 'Macintosh; Intel Mac OS X 10_15_7'];
@@ -219,7 +239,7 @@ export const fetchFlights = async (): Promise<ProcessedData> => {
           checkIn: flight.CheckIn,
           gate: flight.Gate,
           TipLeta: flight.TipLeta,
-          Terminal: flight.Terminal || '',
+          Terminal: flight.Terminal || 'T01',
         })),
       arrivals: rawData
         .filter((flight) => flight.TipLeta === 'I' && isFlightRecent(flight.Aktuelno, mapStatus(flight.StatusEN, flight.Status)))
@@ -238,7 +258,7 @@ export const fetchFlights = async (): Promise<ProcessedData> => {
           checkIn: flight.CheckIn,
           gate: flight.Gate,
           TipLeta: flight.TipLeta,
-          Terminal: flight.Terminal || '',
+          Terminal: flight.Terminal || 'T01',
         })),
     };
 

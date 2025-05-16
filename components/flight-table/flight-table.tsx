@@ -43,6 +43,8 @@ const thClassNames =
 
 const FlightRow = React.memo(OriginalFlightRow);
 
+
+
 // --- Pills and blink helpers ---
 function getStatusClass(status: string) {
   switch (status) {
