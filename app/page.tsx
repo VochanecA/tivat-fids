@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/header';
 import { FlightTable } from '@/components/flight-table/flight-table';
 import { version as nextVersion } from 'next/package.json';
+import { FaClock } from 'react-icons/fa';
+
 
 function Typewriter({
   text,
@@ -116,24 +118,27 @@ export default function Home() {
 
       <footer className="border-t border-gray-200 dark:border-gray-800 py-4 px-6 text-sm text-gray-500 dark:text-gray-400">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
-          <div className="text-left w-full sm:w-auto">
-            {isClient && latestUpdate ? (
-              <>
-                Latest update:{' '}
-                <time dateTime={latestUpdate.toISOString()}>
-                  {formatDateTime(latestUpdate)}
-                </time>
-              </>
-            ) : (
-              <>Loading latest update...</>
-            )}
-          </div>
+<div className="text-center w-full sm:w-auto flex items-center justify-center gap-2 text-gray-700 dark:text-gray-300 text-sm">
+  <FaClock className="text-blue-500" />
+  {isClient && latestUpdate ? (
+    <>
+      Latest update:{' '}
+      <time dateTime={latestUpdate.toISOString()}>
+        {formatDateTime(latestUpdate)}
+      </time>
+    </>
+  ) : (
+    <>Loading latest update...</>
+  )}
+</div>
+
 
           <div className="text-center w-full sm:w-auto">
-            © {new Date().getFullYear()} Airports of Montenegro. All rights reserved.
+            © {new Date().getFullYear()} Code by Alen. All rights reserved.
+            
           </div>
 
-          <div className="flex items-center space-x-2 w-full sm:w-auto justify-center sm:justify-end">
+          {/* <div className="flex items-center space-x-2 w-full sm:w-auto justify-center sm:justify-end">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -150,7 +155,7 @@ export default function Home() {
             </svg>
             <span className="text-orange-500">Next.js v{nextVersion}</span>
             <span className="hidden sm:inline text-orange-500">| Code by Alen</span>
-          </div>
+          </div> */}
         </div>
       </footer>
     </div>

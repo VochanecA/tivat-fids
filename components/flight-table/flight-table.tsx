@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { FlightTableHeader } from './flight-table-header';
 import { FlightRow as OriginalFlightRow } from './flight-row';
 import { AirlineLogo } from './airline-logo';
+import { FaPlaneDeparture, FaPlaneArrival, FaClock, FaDoorOpen } from 'react-icons/fa';
 
 interface Flight {
   ident: string;
@@ -95,6 +96,8 @@ function useBlink(status: string) {
 
 
 // --- Mobile Card ---
+
+
 function FlightCard({ flight }: { flight: Flight }) {
   const blinkClass = useBlink(flight.status);
   const statusClass = getStatusClass(flight.status);
@@ -114,65 +117,67 @@ function FlightCard({ flight }: { flight: Flight }) {
           animation: blink 0.4s infinite;
         }
         .flight-card {
-          transition: transform 0.2s, box-shadow 0.2s;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .flight-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+          transform: translateY(-4px);
+          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
         }
       `}</style>
-      <div className="flight-card block md:hidden border border-gray-200 rounded-lg p-4 mb-4 bg-white dark:bg-gray-800 dark:border-gray-700 shadow-sm">
+
+      <div className="flight-card block md:hidden bg-white/90 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700 backdrop-blur rounded-2xl p-5 mb-5 shadow-md">
+        {/* Header: Airline + Status */}
         <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-3">
             <AirlineLogo name={flight.KompanijaNaziv} icao={flight.KompanijaICAO} />
             <div>
-              <div className="font-semibold text-lg">{flight.KompanijaNaziv}</div>
+              <div className="font-semibold text-base text-gray-800 dark:text-gray-100">{flight.KompanijaNaziv}</div>
               <a
                 href={`https://www.flightaware.com/live/flight/${flight.KompanijaICAO}${flight.ident}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-base text-indigo-600 dark:text-indigo-400 no-underline hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
-                title="View on FlightAware"
-                tabIndex={0}
+                className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
               >
                 {flight.Kompanija}{flight.ident}
               </a>
             </div>
           </div>
           <span
-            className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-sm font-medium ${statusClass} ${blinkClass}`}
+            className={`px-3 py-1 rounded-full text-xs font-medium ${statusClass} ${blinkClass}`}
             style={{ minWidth: '80px' }}
           >
             {flight.status}
           </span>
         </div>
 
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <div className="text-xl font-bold text-orange-600 dark:text-orange-400">{flight.grad}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              {flight.TipLeta === 'O' ? flight.destination.code : flight.origin.code}
-            </div>
-          </div>
+        {/* Destination */}
+        <div className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white mb-3">
+          {flight.TipLeta === 'O' ? <FaPlaneDeparture className="text-orange-500" /> : <FaPlaneArrival className="text-green-500" />}
+          <span>{flight.grad}</span>
+          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            ({flight.TipLeta === 'O' ? flight.destination.code : flight.origin.code})
+          </span>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="text-center">
-            <div className="text-xs text-gray-500 dark:text-gray-400">Scheduled</div>
-            <div className="text-base font-bold text-gray-800 dark:text-gray-200">{flight.scheduled_out}</div>
+        {/* Times Grid */}
+        <div className="grid grid-cols-3 text-center text-sm mb-4">
+          <div>
+            <div className="text-gray-500 dark:text-gray-400 mb-1">Scheduled</div>
+            <div className="font-semibold text-gray-800 dark:text-gray-200">{flight.scheduled_out}</div>
           </div>
-          <div className="text-center">
-            <div className="text-xs text-gray-500 dark:text-gray-400">Estimated</div>
-            <div className={`text-base font-bold text-gray-800 dark:text-gray-200 ${flight.estimated_out ? blinkClass : ''}`}>
+          <div>
+            <div className="text-gray-500 dark:text-gray-400 mb-1">Estimated</div>
+            <div className={`font-semibold ${blinkClass} text-gray-800 dark:text-gray-200`}>
               {flight.estimated_out || '—'}
             </div>
           </div>
-          <div className="text-center">
-            <div className="text-xs text-gray-500 dark:text-gray-400">Actual</div>
-            <div className="text-base font-bold text-gray-800 dark:text-gray-200">{flight.actual_out || '—'}</div>
+          <div>
+            <div className="text-gray-500 dark:text-gray-400 mb-1">Actual</div>
+            <div className="font-semibold text-gray-800 dark:text-gray-200">{flight.actual_out || '—'}</div>
           </div>
         </div>
 
+        {/* Info Row with Pills */}
         <div className="flex justify-between items-center">
           <div className="flex flex-col items-center">
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Terminal</div>
@@ -184,19 +189,28 @@ function FlightCard({ flight }: { flight: Flight }) {
               <span className="text-gray-400 dark:text-gray-600">—</span>
             )}
           </div>
+
           <div className="flex flex-col items-center">
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Gate</div>
-            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">{flight.gate || '—'}</div>
+            <div className="px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm bg-white/60 dark:bg-white/10 text-gray-800 dark:text-gray-200 shadow-sm">
+              {flight.gate || '—'}
+            </div>
           </div>
+
           <div className="flex flex-col items-center">
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Check-in</div>
-            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">{flight.checkIn || '—'}</div>
+            <div className="px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm bg-white/60 dark:bg-white/10 text-gray-800 dark:text-gray-200 shadow-sm">
+              {flight.checkIn || '—'}
+            </div>
           </div>
         </div>
       </div>
     </>
   );
 }
+
+
+
 
 
 // --- Main Table Component ---
