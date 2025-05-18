@@ -1,5 +1,7 @@
 // utils/fetchFlights.ts
 
+
+
 interface RawFlight {
   Updateovano: string;
   Datum: string;
