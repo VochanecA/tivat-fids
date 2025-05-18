@@ -52,6 +52,8 @@ function FlightRowComponent({ flight, index = 0, activeTab, isLoading = false }:
 useEffect(() => {
   if (displayFlight.status === 'Processing') {
     setBlinkClass('blink-slow');
+  } else if (displayFlight.status === 'Boarding') {
+    setBlinkClass('blink-slow');
   } else if (displayFlight.status === 'Delay') {
     setBlinkClass('blink-fast');
   } else if (displayFlight.status === 'Diverted') {
@@ -87,8 +89,9 @@ useEffect(() => {
         animation: 'blink-slow'
       },
       'Boarding': {
-        bgClass: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-800',
-        iconClass: 'text-blue-500 dark:text-blue-400'
+        bgClass: 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-800',
+        iconClass: 'text-yellow-500 dark:text-yellow-400',
+        animation: 'blink-slow'
       },
       'Final Call': {
         bgClass: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900 dark:text-amber-200 dark:border-amber-800',
@@ -107,8 +110,8 @@ useEffect(() => {
         iconClass: 'text-slate-500 dark:text-slate-400'
       },
       'Delay': {
-        bgClass: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900 dark:text-red-200 dark:border-red-800',
-        iconClass: 'text-red-500 dark:text-red-400',
+        bgClass: 'bg-orange-500 text-white border-orange-600 dark:bg-orange-600 dark:text-white dark:border-orange-700',
+        iconClass: 'text-orange-100 dark:text-orange-100',
         animation: 'blink-fast'
       },
       'Diverted': {
@@ -126,8 +129,8 @@ useEffect(() => {
         iconClass: 'text-green-500 dark:text-green-400'
       },
       'Cancelled': {
-        bgClass: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-900 dark:text-red-200 dark:border-red-800',
-        iconClass: 'text-red-500 dark:text-red-400'
+        bgClass: 'bg-red-500 text-white border-red-600 dark:bg-red-600 dark:text-white dark:border-red-700',
+        iconClass: 'text-red-100 dark:text-red-100'
       },
       'Scheduled': {
         bgClass: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-900 dark:text-sky-200 dark:border-sky-800',

@@ -50,29 +50,30 @@ const FlightRow = React.memo(OriginalFlightRow);
 function getStatusClass(status: string) {
   switch (status) {
     case 'Processing':
-      return 'bg-green-800 text-green-50 dark:bg-green-800 dark:text-green-100';
+      return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-green-800 text-green-50 dark:bg-green-800 dark:text-green-100';
     case 'Diverted':
-     return 'bg-red-600 text-white dark:bg-red-700 dark:text-red-50';
+     return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-red-600 text-white dark:bg-red-700 dark:text-red-50';
     case 'Boarding':
-      return 'bg-green-100 text-green-800 dark:bg-yellow-400 dark:text-black';
+return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border bg-green-100 text-green-800 dark:bg-yellow-400 dark:text-black';
+
     case 'Final Call':
       return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300';
     case 'Departed':
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+      return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
     case 'Arrived':
       return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
     case 'Closed':
-      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+      return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
     case 'Delay':
-      return 'bg-red-500 text-red-50 dark:bg-red-500 dark:text-red-50';
+      return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-red-500 text-red-50 dark:bg-red-500 dark:text-red-50';
     case 'On time':
-      return 'bg-green-200 text-green-900 dark:bg-green-700 dark:text-green-200';
+      return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border bg-green-200 text-green-900 dark:bg-green-700 dark:text-green-200';
     case 'Cancelled':
-      return 'bg-red-600 text-white dark:bg-red-700 dark:text-red-200';
+      return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-red-600 text-white dark:bg-red-700 dark:text-red-200';
     case 'Scheduled':
-      return 'bg-blue-200 text-blue-900 dark:bg-blue-700 dark:text-blue-300';
+      return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-blue-200 text-blue-900 dark:bg-blue-700 dark:text-blue-50';
     default:
-      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+      return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
   }
 }
 
@@ -89,6 +90,9 @@ function useBlink(status: string) {
     if (status === 'Processing') setBlinkClass('blink-slow');
     else if (status === 'Delay') setBlinkClass('blink-fast');
     else if (status === 'Diverted') setBlinkClass('blink-slow');
+    else if (status === 'Boarding') setBlinkClass('blink-fast');
+   else if (status === 'Cancelled') setBlinkClass('blink-slow');
+   else if (status === 'Earlier') setBlinkClass('blink-slow');
     else setBlinkClass('');
   }, [status]);
   return blinkClass;

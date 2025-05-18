@@ -9,60 +9,60 @@ interface FlightTableHeaderProps {
 
 export function FlightTableHeader({ activeTab, onTabChange }: FlightTableHeaderProps) {
   return (
-    <>
-      {/* Add the CSS animation for the blinking effect */}
-      <style jsx global>{`
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.0;
-            transform: scale(0.9);
-          }
-        }
-        .blink-circle {
-          animation: pulse 1s infinite;
-          height: 10px;
-          width: 10px;
-          border-radius: 50%;
-          background-color: #10b981; /* green-500 */
-          display: inline-block;
-          margin-right: 8px;
-        }
-      `}</style>
+    <nav
+      role="tablist"
+      aria-label="Flight table tabs"
+      className="flex border-b border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-md shadow-inner"
+    >
+      {['departures', 'arrivals'].map((tab) => {
+        const isActive = activeTab === tab;
+        const label = tab.charAt(0).toUpperCase() + tab.slice(1);
 
-      <div className="flex border-b border-gray-200 dark:border-gray-700">
-        <button
-          className={cn(
-            "flex items-center space-x-1 px-2 py-1 text-base sm:px-4 sm:py-2 sm:text-lg font-bold focus:outline-none transition-colors",
-            activeTab === 'departures'
-              ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-              : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-          )}
-          onClick={() => onTabChange('departures')}
-          aria-current={activeTab === 'departures' ? 'page' : undefined}
-        >
-          {activeTab === 'departures' && <span className="blink-circle" aria-hidden="true"></span>}
-          <FaPlaneDeparture className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
-          <span>Departures</span>
-        </button>
-        <button
-          className={cn(
-            "flex items-center space-x-1 px-2 py-1 text-base sm:px-4 sm:py-2 sm:text-lg font-medium focus:outline-none transition-colors",
-            activeTab === 'arrivals'
-              ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-              : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-          )}
-          onClick={() => onTabChange('arrivals')}
-          aria-current={activeTab === 'arrivals' ? 'page' : undefined}
-        >
-          {activeTab === 'arrivals' && <span className="blink-circle" aria-hidden="true"></span>}
-          <FaPlaneArrival className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
-          <span>Arrivals</span>
-        </button>
-      </div>
-    </>
+        return (
+          <button
+            key={tab}
+            role="tab"
+            aria-selected={isActive}
+            tabIndex={isActive ? 0 : -1}
+            onClick={() => onTabChange(tab as FlightType)}
+            className={cn(
+              "flex items-center justify-center gap-2 px-4 py-2 sm:px-6 sm:py-3 font-semibold rounded-t-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+              isActive
+                ? "bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-md"
+                : "text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400",
+              "flex-1 w-1/2" // Equal width 50% on mobile, flex-grow on bigger screens
+            )}
+          >
+<>
+  <span
+    aria-hidden="true"
+    className={cn(
+      "inline-block rounded-full w-2.5 h-2.5 bg-green-500",
+      isActive ? "pulse-fast" : "opacity-0"
+    )}
+  ></span>
+
+  <style jsx>{`
+    @keyframes pulseFast {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .pulse-fast {
+      animation: pulseFast 2s infinite;
+    }
+  `}</style>
+</>
+
+
+            {tab === 'departures' ? (
+              <FaPlaneDeparture className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+            ) : (
+              <FaPlaneArrival className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+            )}
+            <span className="text-sm sm:text-base">{label}</span>
+          </button>
+        );
+      })}
+    </nav>
   );
 }
