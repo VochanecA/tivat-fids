@@ -110,7 +110,8 @@ useEffect(() => {
       },
 'Closed': {
   bgClass: 'bg-orange-400 text-black border-slate-200 dark:bg-orange-500 dark:text-black dark:border-slate-800',
-  iconClass: 'text-black dark:text-black'
+  iconClass: 'text-black dark:text-black',
+   animation: 'blink-slow'
 },
 
       'Delay': {
