@@ -93,7 +93,7 @@ function useBlink(status: string) {
     else if (status === 'Boarding') setBlinkClass('blink-fast');
    else if (status === 'Cancelled') setBlinkClass('blink-slow');
    else if (status === 'Earlier') setBlinkClass('blink-slow');
-    else if (status === 'Close') setBlinkClass('blink-slow');
+    else if (status === 'Closed') setBlinkClass('blink-slow');
     else setBlinkClass('');
   }, [status]);
   return blinkClass;
