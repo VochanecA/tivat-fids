@@ -54,9 +54,11 @@ useEffect(() => {
     setBlinkClass('blink-slow');
   } else if (displayFlight.status === 'Boarding') {
     setBlinkClass('blink-slow');
-  } else if (displayFlight.status === 'Delay') {
-    setBlinkClass('blink-fast');
-  } else if (displayFlight.status === 'Diverted') {
+  } else if (
+    displayFlight.status === 'Delay' ||
+    displayFlight.status === 'Diverted' ||
+    displayFlight.status === 'Closed'  // Added Closed here
+  ) {
     setBlinkClass('blink-fast');
   } else if (displayFlight.status === 'Earlier') {
     setBlinkClass('blink-earlier');
@@ -64,6 +66,7 @@ useEffect(() => {
     setBlinkClass('');
   }
 }, [displayFlight.status]);
+
 
 
   type StatusKey =

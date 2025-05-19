@@ -6,6 +6,7 @@ import { FlightTable } from '@/components/flight-table/flight-table';
 import { version as nextVersion } from 'next/package.json';
 import { FaClock } from 'react-icons/fa';
 
+
 export default function Home() {
   const [currentDate, setCurrentDate] = useState('');
   const [latestUpdate, setLatestUpdate] = useState<Date | null>(null);
