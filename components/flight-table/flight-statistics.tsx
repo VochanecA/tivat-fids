@@ -1,149 +1,188 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-import { ProcessedData } from '@/utils/fetchFlights';
-import {
-  calculateFlightStatistics,
-  FlightStatistics as FlightStatisticsType,
-} from '@/utils/fetchFlightsStatistics';
-import {
-  FaPlaneArrival,
-  FaPlaneDeparture,
-  FaClock,
-  FaChartPie,
-  FaExclamationTriangle,
-} from 'react-icons/fa';
+import React from 'react';
+import { FlightStatistics } from '../../utils/fetchFlightsStatistics';
+import Link from 'next/link';
+import { FaArrowLeft, FaPlaneArrival, FaPlaneDeparture, FaClock, FaChartBar, FaPlane } from 'react-icons/fa';
 
 interface FlightStatisticsProps {
-  flightData: ProcessedData | null;
-  isLoading: boolean;
+  statistics: FlightStatistics;
+  isStandalone?: boolean;
 }
 
-export function FlightStatistics({ flightData, isLoading }: FlightStatisticsProps) {
-  const [stats, setStats] = useState<FlightStatisticsType | null>(null);
+const FlightStatisticsComponent: React.FC<FlightStatisticsProps> = ({
+  statistics,
+  isStandalone = false
+}) => {
+  const {
+    totalFlights,
+    arrivalCount,
+    departureCount,
+    onTimePercentage,
+    delayedCount,
+    cancelledCount,
+    airlineDistribution,
+    destinationDistribution,
+    originDistribution,
+    statusDistribution,
+    hourlyDistribution
+  } = statistics;
 
-  useEffect(() => {
-    if (flightData) {
-      setStats(calculateFlightStatistics(flightData));
-    }
-    const interval = setInterval(() => {
-      if (flightData) {
-        setStats(calculateFlightStatistics(flightData));
-      }
-    }, 60 * 60 * 1000); // every hour
-    return () => clearInterval(interval);
-  }, [flightData]);
-
-  if (isLoading || !stats) {
-    return <div className="p-4 text-gray-500">Loading flight statistics...</div>;
-  }
-
-  // For airline chart
-  const airlineTotal = stats.airlineDistribution.reduce((sum, item) => sum + item.value, 0);
-  const airlineSlices = stats.airlineDistribution.map((item, idx) => {
-    const percent = (item.value / airlineTotal) * 100;
-    return `${getColor(idx)} ${percent}%`;
-  });
-
-  function getColor(index: number): string {
-    const colors = ['#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6'];
-    return colors[index % colors.length];
-  }
+  const renderDistribution = (items: Array<{ name: string; value?: number; count?: number; percentage?: number }>, limit?: number) => {
+    const displayItems = limit ? items.slice(0, limit) : items;
+    return (
+      <ul className="space-y-2">
+        {displayItems.map((item, index) => (
+          <li key={index} className="flex justify-between items-center p-2 bg-gray-100 dark:bg-gray-700 rounded">
+            <span className="font-medium text-gray-800 dark:text-gray-200">{item.name}</span>
+            <span className="text-gray-600 dark:text-gray-400">
+              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                {item.value ?? item.count ?? 0}
+              </span>
+              {item.percentage !== undefined && ` (${item.percentage}%)`}
+            </span>
+          </li>
+        ))}
+      </ul>
+    );
+  };
 
   return (
-    <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md mb-6">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200 flex items-center">
-        <FaChartPie className="mr-2 text-blue-500" /> Flight Statistics (auto-refresh 60 min)
-      </h2>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg shadow">
-          <h3 className="text-blue-700 dark:text-blue-300 font-medium">Total Flights</h3>
-          <div className="text-blue-600 dark:text-blue-400 text-2xl">{stats.totalFlights}</div>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-            <FaPlaneDeparture className="inline mr-1 text-green-500" />
-            {stats.departureCount} dep &nbsp;
-            <FaPlaneArrival className="inline mr-1 text-purple-500" />
-            {stats.arrivalCount} arr
-          </p>
-        </div>
-
-        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg shadow">
-          <h3 className="text-green-700 dark:text-green-300 font-medium">On-time Performance</h3>
-          <div className="text-green-600 dark:text-green-400 text-2xl">{stats.onTimePercentage}%</div>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-            <FaClock className="inline mr-1 text-yellow-500" />
-            {stats.delayedCount} delayed &nbsp;
-            <FaExclamationTriangle className="inline mr-1 text-red-500" />
-            {stats.cancelledCount} cancelled
-          </p>
-        </div>
-
-        <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg shadow">
-          <h3 className="text-amber-700 dark:text-amber-300 font-medium mb-1">Top Airline</h3>
-          <div className="text-xl font-semibold text-amber-600 dark:text-amber-400">
-            {stats.airlineDistribution[0]?.name || 'N/A'}
-          </div>
-        </div>
-
-        <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg shadow">
-          <h3 className="text-indigo-700 dark:text-indigo-300 font-medium mb-1">Top Destination</h3>
-          <div className="text-xl font-semibold text-indigo-600 dark:text-indigo-400">
-            {stats.destinationDistribution[0]?.name || 'N/A'}
-          </div>
-        </div>
+    <div className="flight-statistics bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg p-6">
+      <div className="mb-6 flex justify-between items-center">
+        <Link
+          href="/"
+          className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-sm"
+        >
+          <FaArrowLeft className="mr-2" />
+          Back
+        </Link>
+        {!isStandalone && (
+          <Link
+            href="/flight-statistics"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-sm"
+          >
+            Open Full Statistics
+          </Link>
+        )}
       </div>
 
-      {/* Airline "Pie" using CSS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-          <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Airline Distribution</h4>
-          <div className="relative w-40 h-40 mx-auto rounded-full border-4 border-white shadow"
-            style={{
-              background: `conic-gradient(${stats.airlineDistribution
-                .map((item, i) => `${getColor(i)} 0 ${((item.value / airlineTotal) * 360).toFixed(0)}deg`)
-                .join(', ')})`,
-            }}
-          ></div>
-          <ul className="mt-4 text-sm text-gray-800 dark:text-gray-300">
-            {stats.airlineDistribution.map((item, i) => (
-              <li key={i} className="flex items-center mb-1">
-                <span className="w-3 h-3 inline-block rounded-full mr-2" style={{ backgroundColor: getColor(i) }}></span>
-                {item.name} ({item.value})
-              </li>
-            ))}
-          </ul>
+      <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">Flight Statistics</h2>
+
+      <div className="statistics-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Main Statistics */}
+        <div className="statistics-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-200 dark:bg-blue-800 text-blue-800 dark:text-blue-200 mr-2">
+              <FaChartBar className="mr-1" /> Overview
+            </span>
+          </h3>
+          <div className="stats-grid grid grid-cols-2 gap-4">
+            <div className="stat-item bg-gray-50 dark:bg-gray-700 p-4 rounded-md shadow-sm">
+              <span className="stat-label text-sm text-gray-600 dark:text-gray-300">Total Flights</span>
+              <span className="stat-value block text-2xl font-bold text-gray-900 dark:text-white mt-1">{totalFlights}</span>
+            </div>
+            <div className="stat-item bg-gray-50 dark:bg-gray-700 p-4 rounded-md shadow-sm">
+              <span className="stat-label text-sm text-gray-600 dark:text-gray-300">Arrivals</span>
+              <span className="stat-value block text-2xl font-bold text-gray-900 dark:text-white mt-1">{arrivalCount}</span>
+            </div>
+            <div className="stat-item bg-gray-50 dark:bg-gray-700 p-4 rounded-md shadow-sm">
+              <span className="stat-label text-sm text-gray-600 dark:text-gray-300">Departures</span>
+              <span className="stat-value block text-2xl font-bold text-gray-900 dark:text-white mt-1">{departureCount}</span>
+            </div>
+            <div className="stat-item bg-gray-50 dark:bg-gray-700 p-4 rounded-md shadow-sm">
+              <span className="stat-label text-sm text-gray-600 dark:text-gray-300">On Time</span>
+              <span className="stat-value block text-2xl font-bold text-gray-900 dark:text-white mt-1">{onTimePercentage}%</span>
+            </div>
+            <div className="stat-item bg-gray-50 dark:bg-gray-700 p-4 rounded-md shadow-sm">
+              <span className="stat-label text-sm text-gray-600 dark:text-gray-300">Delayed</span>
+              <span className="stat-value block text-2xl font-bold text-gray-900 dark:text-white mt-1">{delayedCount}</span>
+            </div>
+            <div className="stat-item bg-gray-50 dark:bg-gray-700 p-4 rounded-md shadow-sm">
+              <span className="stat-label text-sm text-gray-600 dark:text-gray-300">Cancelled</span>
+              <span className="stat-value block text-2xl font-bold text-gray-900 dark:text-white mt-1">{cancelledCount}</span>
+            </div>
+          </div>
         </div>
 
-        {/* Hourly Distribution Bars */}
-        <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-          <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">Hourly Distribution</h4>
-          <div className="space-y-2 text-sm">
-            {stats.hourlyDistribution.map((hour, i) => {
-              const total = hour.arrivals + hour.departures;
-              return (
-                <div key={i}>
-                  <div className="flex justify-between text-gray-600 dark:text-gray-300">
-                    <span>{hour.hour}:00</span>
-                    <span>{total} flights</span>
-                  </div>
-                  <div className="flex h-3 w-full bg-gray-300 rounded overflow-hidden">
+        {/* Status Distribution */}
+        <div className="statistics-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 mr-2">
+              <FaPlane className="mr-1" /> Flight Status
+            </span>
+          </h3>
+          {renderDistribution(statusDistribution)}
+        </div>
+
+        {/* Top Airlines */}
+        <div className="statistics-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200 mr-2">
+              <FaPlane className="mr-1" /> Top Airlines
+            </span>
+          </h3>
+          {renderDistribution(airlineDistribution)}
+        </div>
+
+        {/* Top Destinations */}
+        <div className="statistics-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-yellow-200 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 mr-2">
+              <FaPlaneArrival className="mr-1" /> Top Destinations
+            </span>
+          </h3>
+          {renderDistribution(destinationDistribution)}
+        </div>
+
+        {/* Top Origins */}
+        <div className="statistics-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-red-200 dark:bg-red-800 text-red-800 dark:text-red-200 mr-2">
+              <FaPlaneDeparture className="mr-1" /> Top Origins
+            </span>
+          </h3>
+          {renderDistribution(originDistribution)}
+        </div>
+
+        {/* Hourly Distribution */}
+        <div className="statistics-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md col-span-1 md:col-span-2 lg:col-span-3">
+          <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-indigo-200 dark:bg-indigo-800 text-indigo-800 dark:text-indigo-200 mr-2">
+              <FaClock className="mr-1" /> Hourly Traffic
+            </span>
+          </h3>
+          <div className="hourly-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {hourlyDistribution.map((hourData) => (
+              <div key={hourData.hour} className="hourly-item bg-gray-50 dark:bg-gray-700 p-3 rounded-md shadow-sm">
+                <span className="hour block text-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {hourData.hour}:00
+                </span>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs text-gray-600 dark:text-gray-400 w-12">Arrivals:</span>
+                  <div className="flex-1 h-4 bg-green-100 dark:bg-green-900 rounded-full overflow-hidden">
                     <div
-                      className="bg-blue-400"
-                      style={{ width: `${(hour.departures / total) * 100 || 0}%` }}
-                    ></div>
-                    <div
-                      className="bg-purple-400"
-                      style={{ width: `${(hour.arrivals / total) * 100 || 0}%` }}
+                      className="h-full bg-green-500 dark:bg-green-600"
+                      style={{ width: `${(hourData.arrivals / Math.max(1, arrivalCount)) * 100}%` }}
                     ></div>
                   </div>
+                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{hourData.arrivals}</span>
                 </div>
-              );
-            })}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-600 dark:text-gray-400 w-12">Departures:</span>
+                  <div className="flex-1 h-4 bg-blue-100 dark:bg-blue-900 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-500 dark:bg-blue-600"
+                      style={{ width: `${(hourData.departures / Math.max(1, departureCount)) * 100}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{hourData.departures}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default FlightStatisticsComponent;
