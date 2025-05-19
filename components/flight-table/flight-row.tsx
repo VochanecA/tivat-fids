@@ -89,7 +89,7 @@ useEffect(() => {
         animation: 'blink-slow'
       },
       'Boarding': {
-        bgClass: 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-800',
+        bgClass: 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-500 dark:text-black dark:border-yellow-500',
         iconClass: 'text-yellow-500 dark:text-yellow-400',
         animation: 'blink-slow'
       },
@@ -105,10 +105,11 @@ useEffect(() => {
         bgClass: 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-900 dark:text-teal-200 dark:border-teal-800',
         iconClass: 'text-teal-500 dark:text-teal-400'
       },
-      'Closed': {
-        bgClass: 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900 dark:text-slate-200 dark:border-slate-800',
-        iconClass: 'text-slate-500 dark:text-slate-400'
-      },
+'Closed': {
+  bgClass: 'bg-orange-400 text-black border-slate-200 dark:bg-orange-500 dark:text-black dark:border-slate-800',
+  iconClass: 'text-black dark:text-black'
+},
+
       'Delay': {
         bgClass: 'bg-orange-500 text-white border-orange-600 dark:bg-orange-600 dark:text-white dark:border-orange-700',
         iconClass: 'text-orange-100 dark:text-orange-100',
