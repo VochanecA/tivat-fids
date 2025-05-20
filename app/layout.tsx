@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/hooks/useTheme';
 import WakeLock from '@/components/flight-table/WakeLock'; // adjust path as needed
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -32,6 +32,7 @@ export default function RootLayout({
         <ThemeProvider>
           <WakeLock />
           <div className="flex-grow flex flex-col">{children}</div>
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
