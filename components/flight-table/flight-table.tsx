@@ -269,7 +269,7 @@ useEffect(() => {
   useEffect(() => {
     const tabInterval = setInterval(() => {
       setActiveTab((prev) => (prev === 'departures' ? 'arrivals' : 'departures'));
-    }, 20 * 1000);
+    }, 25 * 1000);
     return () => clearInterval(tabInterval);
   }, []);
 
@@ -435,7 +435,7 @@ useEffect(() => {
                 : filteredArrivals.length
             } ${activeTab}`}
         </div>
-        <div>Auto-switching tabs every 20 seconds</div>
+        <div>Auto-switching tabs every 25 seconds</div>
       </div>
     </div>
   );

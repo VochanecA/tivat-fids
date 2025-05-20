@@ -27,7 +27,7 @@ export default function FlightStatisticsPage() {
     fetchFlightData();
     const refreshInterval = setInterval(() => {
       fetchFlightData();
-    }, 60 * 1000);
+    }, 120 * 1000);
     return () => clearInterval(refreshInterval);
   }, []);
 
