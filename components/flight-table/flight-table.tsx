@@ -53,6 +53,8 @@ function getStatusClass(status: string) {
       return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-red-600 text-white dark:bg-red-700 dark:text-red-50';
     case 'Boarding':
       return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border bg-green-100 text-green-800 dark:bg-yellow-400 dark:text-black';
+    case 'Earlier':
+      return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border bg-blue-400 text-black dark:bg-blue-400 dark:text-black';
     case 'Final Call':
       return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300';
     case 'Departed':
