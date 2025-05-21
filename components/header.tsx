@@ -2,7 +2,7 @@
 
 import { Logo } from './logo';
 import { ThemeToggle } from './ui/theme-toggle';
-import { RefreshCw, Maximize, Menu, X, Info, Download, BatteryCharging, Battery } from 'lucide-react';
+import { RefreshCw, Maximize, Menu, X, Info, Download, BatteryCharging, Battery, HelpCircle } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { FaChartBar } from 'react-icons/fa';
@@ -134,6 +134,14 @@ export function Header() {
               <Info className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </Link>
 
+            <Link
+              href="/faq"
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-110"
+              aria-label="FAQ page"
+            >
+              <HelpCircle className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+            </Link>
+
             {/* Download APK for Android */}
             <Link
               href="/Tivat-FIDS.apk"
@@ -232,6 +240,15 @@ export function Header() {
             >
               <span className="text-gray-700 dark:text-gray-300">About</span>
               <Info className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+            </Link>
+
+            <Link
+              href="/faq"
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="text-gray-700 dark:text-gray-300">FAQ</span>
+              <HelpCircle className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </Link>
 
             {/* Download APK for Android */}
