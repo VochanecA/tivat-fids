@@ -30,7 +30,6 @@ interface FlightRowProps {
   activeTab: 'arrivals' | 'departures';
 }
 
-
 interface ProcessedData {
   departures: Flight[];
   arrivals: Flight[];
@@ -45,17 +44,15 @@ const thClassNames =
 const FlightRow = React.memo(OriginalFlightRow);
 
 
-
 // --- Pills and blink helpers ---
 function getStatusClass(status: string) {
   switch (status) {
     case 'Processing':
       return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-green-800 text-green-50 dark:bg-green-800 dark:text-green-100';
     case 'Diverted':
-     return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-red-600 text-white dark:bg-red-700 dark:text-red-50';
+      return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border  bg-red-600 text-white dark:bg-red-700 dark:text-red-50';
     case 'Boarding':
-return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border bg-green-100 text-green-800 dark:bg-yellow-400 dark:text-black';
-
+      return 'inline-flex items-center justify-center text-center px-3 py-1 text-xs font-semibold rounded border bg-green-100 text-green-800 dark:bg-yellow-400 dark:text-black';
     case 'Final Call':
       return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300';
     case 'Departed':
@@ -91,18 +88,15 @@ function useBlink(status: string) {
     else if (status === 'Delay') setBlinkClass('blink-fast');
     else if (status === 'Diverted') setBlinkClass('blink-slow');
     else if (status === 'Boarding') setBlinkClass('blink-fast');
-   else if (status === 'Cancelled') setBlinkClass('blink-slow');
-   else if (status === 'Earlier') setBlinkClass('blink-slow');
+    else if (status === 'Cancelled') setBlinkClass('blink-slow');
+    else if (status === 'Earlier') setBlinkClass('blink-slow');
     else if (status === 'Closed') setBlinkClass('blink-slow');
     else setBlinkClass('');
   }, [status]);
   return blinkClass;
 }
 
-
 // --- Mobile Card ---
-
-
 function FlightCard({ flight }: { flight: Flight }) {
   const blinkClass = useBlink(flight.status);
   const statusClass = getStatusClass(flight.status);
@@ -214,9 +208,19 @@ function FlightCard({ flight }: { flight: Flight }) {
   );
 }
 
-
-
-
+// --- Search Helper ---
+function matchesSearch(flight: Flight, search: string) {
+  const s = search.trim().toLowerCase();
+  if (!s) return true;
+  return (
+    flight.ident.toLowerCase().includes(s) ||
+    (flight.grad && flight.grad.toLowerCase().includes(s)) ||
+    (flight.Kompanija && flight.Kompanija.toLowerCase().includes(s)) ||
+    (flight.KompanijaNaziv && flight.KompanijaNaziv.toLowerCase().includes(s)) ||
+    (flight.origin?.code && flight.origin.code.toLowerCase().includes(s)) ||
+    (flight.destination?.code && flight.destination.code.toLowerCase().includes(s))
+  );
+}
 
 // --- Main Table Component ---
 export function FlightTable({ onDataUpdate }: { onDataUpdate?: () => void }) {
@@ -224,47 +228,44 @@ export function FlightTable({ onDataUpdate }: { onDataUpdate?: () => void }) {
     departures: [],
     arrivals: [],
   });
-  const [activeTab, setActiveTab] = useState<'departures' | 'arrivals'>(
-    'departures'
-  );
+  const [activeTab, setActiveTab] = useState<'departures' | 'arrivals'>('departures');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState<string>(''); // <-- search state
 
-const fetchFlightData = useCallback(async () => {
-  try {
-    setLoading(true);
-    const response = await fetch('/api/fetchFlights');
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+  const fetchFlightData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/fetchFlights');
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      setFlights(data);
+      setError(null);
+      if (onDataUpdate) {
+        onDataUpdate(); // <-- Notify parent!
+      }
+    } catch (err) {
+      console.error('Error fetching flights:', err);
+      setError(
+        `Failed to load flight data: ${
+          err instanceof Error ? err.message : 'Unknown error'
+        }. Please try again.`
+      );
+    } finally {
+      setLoading(false);
     }
-    const data = await response.json();
-    setFlights(data);
-    setError(null);
-    if (onDataUpdate) {
-      onDataUpdate(); // <-- Notify parent!
-    }
-  } catch (err) {
-    console.error('Error fetching flights:', err);
-    setError(
-      `Failed to load flight data: ${
-        err instanceof Error ? err.message : 'Unknown error'
-      }. Please try again.`
-    );
-  } finally {
-    setLoading(false);
-  }
-}, [onDataUpdate]);
+  }, [onDataUpdate]);
 
-
-
-useEffect(() => {
-  fetchFlightData(); // initial fetch
-  const refreshInterval = setInterval(() => {
-    fetchFlightData();
-  }, 60 * 1000);
-  return () => clearInterval(refreshInterval);
-  // eslint-disable-next-line
-}, []); // <--- Only run once on mount!
+  useEffect(() => {
+    fetchFlightData(); // initial fetch
+    const refreshInterval = setInterval(() => {
+      fetchFlightData();
+    }, 60 * 1000);
+    return () => clearInterval(refreshInterval);
+    // eslint-disable-next-line
+  }, []); // <--- Only run once on mount!
 
   useEffect(() => {
     const tabInterval = setInterval(() => {
@@ -281,12 +282,13 @@ useEffect(() => {
     return true;
   };
 
-  const filteredDepartures = flights.departures.filter((flight) =>
-    isFlightRecent(flight.actual_out, flight.status)
-  );
-  const filteredArrivals = flights.arrivals.filter((flight) =>
-    isFlightRecent(flight.actual_out, flight.status)
-  );
+  // --- Filtered lists with search ---
+const filteredDepartures = flights.departures
+  .filter((flight) => isFlightRecent(flight.actual_out, flight.status))
+  .filter((flight) => matchesSearch(flight, search));
+const filteredArrivals = flights.arrivals
+  .filter((flight) => isFlightRecent(flight.actual_out, flight.status))
+  .filter((flight) => matchesSearch(flight, search));
 
   if (error) {
     return (
@@ -305,6 +307,22 @@ useEffect(() => {
   return (
     <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900 w-[90vw] max-w-full mx-auto">
       <FlightTableHeader activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {/* Search Box */}
+{/* Search Box - Only on mobile */}
+
+<div className="md:hidden px-4 pt-4 mb-4">
+  <input
+    type="text"
+    value={search}
+    onChange={e => setSearch(e.target.value)}
+    placeholder="Search flights (number, city, airline)..."
+    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-800 dark:text-gray-100"
+    aria-label="Search flights"
+  />
+</div>
+
+
 
       {/* Mobile cards */}
       <div className="md:hidden">
@@ -384,13 +402,12 @@ useEffect(() => {
             ) : activeTab === 'departures' ? (
               filteredDepartures.length > 0 ? (
                 filteredDepartures.map((flight, index) => (
-                <FlightRow
-  key={`${flight.ident}-${flight.destination.code}-${index}`}
-  flight={flight}
-  index={index}
-  activeTab={activeTab}  // Pass activeTab here
-/>
-
+                  <FlightRow
+                    key={`${flight.ident}-${flight.destination.code}-${index}`}
+                    flight={flight}
+                    index={index}
+                    activeTab={activeTab}
+                  />
                 ))
               ) : (
                 <tr>
@@ -404,13 +421,12 @@ useEffect(() => {
               )
             ) : filteredArrivals.length > 0 ? (
               filteredArrivals.map((flight, index) => (
-               <FlightRow
-  key={`${flight.ident}-${flight.destination.code}-${index}`}
-  flight={flight}
-  index={index}
-  activeTab={activeTab}  // Pass activeTab here
-/>
-
+                <FlightRow
+                  key={`${flight.ident}-${flight.destination.code}-${index}`}
+                  flight={flight}
+                  index={index}
+                  activeTab={activeTab}
+                />
               ))
             ) : (
               <tr>
@@ -424,18 +440,6 @@ useEffect(() => {
             )}
           </tbody>
         </table>
-      </div>
-
-      <div className="border-t border-gray-200 px-4 py-3 flex items-center justify-between text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400">
-        <div>
-          {!loading &&
-            `Showing ${
-              activeTab === 'departures'
-                ? filteredDepartures.length
-                : filteredArrivals.length
-            } ${activeTab}`}
-        </div>
-        <div>Auto-switching tabs every 25 seconds</div>
       </div>
     </div>
   );
