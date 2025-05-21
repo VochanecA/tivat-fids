@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/header';
 import { FlightTable } from '@/components/flight-table/flight-table';
-import { version as nextVersion } from 'next/package.json';
 import { FaClock } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -17,7 +16,6 @@ export default function Home() {
     setIsClient(true);
 
     const date = new Date();
-
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
@@ -36,19 +34,6 @@ export default function Home() {
     });
   }
 
-  function requestFullscreen() {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.error(`Error attempting to enable fullscreen: ${err.message} (${err.name})`);
-      });
-    } else {
-      document.exitFullscreen().catch((err) => {
-        console.error(`Error attempting to exit fullscreen: ${err.message} (${err.name})`);
-      });
-    }
-  }
-
-  // This handler will be called from FlightTable after every data fetch
   function handleDataUpdate() {
     setLatestUpdate(new Date());
   }
@@ -58,7 +43,6 @@ export default function Home() {
       <Header />
 
       <main className="flex-1 mx-auto w-[90vw] max-w-full px-4 py-6">
-        {/* Pass the callback to FlightTable */}
         <FlightTable onDataUpdate={handleDataUpdate} />
         <div className="mt-4">
           <Link href="/flight-statistics">
@@ -84,24 +68,21 @@ export default function Home() {
               <>Loading latest update...</>
             )}
           </div>
-
           <div className="text-center w-full sm:w-auto">
             © {new Date().getFullYear()} Code by Alen. All rights reserved.
           </div>
         </div>
-
-        {/* New centered logo and text */}
         <div className="mt-6 flex flex-col items-center justify-center space-y-2">
           <Image
             src="/FA_Logo_RGB-Hex.png"
-            alt="Flightware Logo"
+            alt="FlightAware Logo"
             width={120}
             height={40}
             priority
             className="object-contain"
           />
           <p className="text-center text-gray-600 dark:text-gray-400 text-sm max-w-md">
-            Flight tracking powered by Flightware — delivering reliable and real-time flight data.
+            Flight tracking powered by FlightAware — delivering reliable and real-time flight data.
           </p>
         </div>
       </footer>
