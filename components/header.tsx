@@ -2,7 +2,7 @@
 
 import { Logo } from './logo';
 import { ThemeToggle } from './ui/theme-toggle';
-import { RefreshCw, Maximize, Menu, X, Info } from 'lucide-react';
+import { RefreshCw, Maximize, Menu, X, Info, Download, BatteryCharging, Battery } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { FaChartBar } from 'react-icons/fa';
@@ -12,6 +12,9 @@ export function Header() {
   const [currentDate, setCurrentDate] = useState<string>('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Battery Saver State
+  const [batterySaverOn, setBatterySaverOn] = useState(false);
 
   useEffect(() => {
     const updateDateTime = () => {
@@ -42,6 +45,13 @@ export function Header() {
     };
     window.addEventListener('scroll', handleScroll);
 
+    // Battery Saver: read from localStorage and set <html> attribute
+    const saved = localStorage.getItem('batterySaverOn');
+    if (saved === 'true') {
+      setBatterySaverOn(true);
+      document.documentElement.setAttribute('data-battery-saver', 'on');
+    }
+
     return () => {
       clearInterval(interval);
       window.removeEventListener('scroll', handleScroll);
@@ -56,6 +66,18 @@ export function Header() {
     }
   }, []);
 
+  // Battery Saver Toggle Handler
+  const toggleBatterySaver = () => {
+    const newValue = !batterySaverOn;
+    setBatterySaverOn(newValue);
+    if (newValue) {
+      document.documentElement.setAttribute('data-battery-saver', 'on');
+    } else {
+      document.documentElement.removeAttribute('data-battery-saver');
+    }
+    localStorage.setItem('batterySaverOn', newValue.toString());
+  };
+
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm' : 'bg-white dark:bg-gray-900'} border-b border-gray-200/70 dark:border-gray-800/70`}>
       <div className="container mx-auto px-4">
@@ -64,9 +86,6 @@ export function Header() {
           {/* Logo with subtle animation */}
           <div className="flex items-center space-x-2 group">
             <Logo />
-            {/* <span className="hidden md:block text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 transition-all duration-500 group-hover:scale-105">
-              TIVAT AIRPORT
-            </span> */}
           </div>
 
           {/* Date & time display - Desktop */}
@@ -115,6 +134,20 @@ export function Header() {
               <Info className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </Link>
 
+            {/* Download APK for Android */}
+            <Link
+              href="/Tivat-FIDS.apk"
+              download
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 flex items-center space-x-1"
+              aria-label="Download APK for Android"
+              title="Download APK for Android"
+            >
+              <Download className="h-5 w-5 text-gray-700 dark:text-gray-300" aria-hidden="true" focusable="false" />
+              <span className="hidden sm:inline"></span>
+              <span className="sr-only">Download APK for Android</span>
+            </Link>
+            
+
             <div className="ml-2">
               <ThemeToggle />
             </div>
@@ -151,7 +184,15 @@ export function Header() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <div className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 relative">
+          {/* Close button */}
+          {/* <button
+            onClick={() => setMenuOpen(false)}
+            className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            aria-label="Close menu"
+          >
+            <X className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+          </button> */}
           <div className="container mx-auto px-4 py-3 space-y-3">
             <button
               onClick={() => {
@@ -192,6 +233,38 @@ export function Header() {
               <span className="text-gray-700 dark:text-gray-300">About</span>
               <Info className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </Link>
+
+            {/* Download APK for Android */}
+            <Link
+              href="/Tivat-FIDS.apk"
+              download
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => setMenuOpen(false)}
+              aria-label="Download APK for Android"
+            >
+              <span className="text-gray-700 dark:text-gray-300">Download APK for Android</span>
+              <Download className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+            </Link>
+
+            {/* Battery Saver Toggle */}
+            <button
+              onClick={() => {
+                toggleBatterySaver();
+                setMenuOpen(false);
+              }}
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-pressed={batterySaverOn}
+              aria-label="Toggle Battery Saver mode"
+            >
+              <span className="text-gray-700 dark:text-gray-300">
+                Battery Saver {batterySaverOn ? 'On' : 'Off'}
+              </span>
+              {batterySaverOn ? (
+                <BatteryCharging className="h-5 w-5 text-green-500" />
+              ) : (
+                <Battery className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+              )}
+            </button>
 
             <div className="w-full flex items-center justify-between p-3 rounded-lg">
               <span className="text-gray-700 dark:text-gray-300">Theme</span>

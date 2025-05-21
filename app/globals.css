@@ -8,6 +8,17 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+/* Disable all CSS animations and transitions */
+html[data-battery-saver='on'] *, 
+html[data-battery-saver='on'] *::before, 
+html[data-battery-saver='on'] *::after {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0s !important;
+  scroll-behavior: auto !important;
+}
+
 
 @media (prefers-color-scheme: dark) {
   :root {

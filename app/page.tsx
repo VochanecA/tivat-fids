@@ -5,6 +5,7 @@ import { Header } from '@/components/header';
 import { FlightTable } from '@/components/flight-table/flight-table';
 import { version as nextVersion } from 'next/package.json';
 import { FaClock } from 'react-icons/fa';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Home() {
@@ -87,6 +88,21 @@ export default function Home() {
           <div className="text-center w-full sm:w-auto">
             © {new Date().getFullYear()} Code by Alen. All rights reserved.
           </div>
+        </div>
+
+        {/* New centered logo and text */}
+        <div className="mt-6 flex flex-col items-center justify-center space-y-2">
+          <Image
+            src="/FA_Logo_RGB-Hex.png"
+            alt="Flightware Logo"
+            width={120}
+            height={40}
+            priority
+            className="object-contain"
+          />
+          <p className="text-center text-gray-600 dark:text-gray-400 text-sm max-w-md">
+            Flight tracking powered by Flightware — delivering reliable and real-time flight data.
+          </p>
         </div>
       </footer>
     </div>

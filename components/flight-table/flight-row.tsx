@@ -127,7 +127,7 @@ useEffect(() => {
       'Earlier': {
         bgClass: 'bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-800 dark:text-blue-100 dark:border-blue-700',
         iconClass: 'text-blue-500 dark:text-blue-400',
-        animation: 'blink-earlier'
+        animation: 'blink-fast'
       },
       'On time': {
         bgClass: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-800',
