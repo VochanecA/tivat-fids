@@ -5,7 +5,8 @@ import { ThemeToggle } from './ui/theme-toggle';
 import { RefreshCw, Maximize, Menu, X, Info, Download, BatteryCharging, Battery, HelpCircle } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { FaChartBar } from 'react-icons/fa';
+
+import { FaPlaneArrival, FaPlaneDeparture, FaChartBar } from 'react-icons/fa';
 
 export function Header() {
   const [currentTime, setCurrentTime] = useState<string>('');
@@ -117,7 +118,20 @@ export function Header() {
             >
               <Maximize className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
-
+<Link
+  href="/arrivals"
+  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-110"
+  aria-label="Arrivals"
+>
+  <FaPlaneArrival className="h-5 w-5 text-green-600 dark:text-green-300" />
+</Link>
+<Link
+  href="/departures"
+  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-110"
+  aria-label="Departures"
+>
+  <FaPlaneDeparture className="h-5 w-5 text-orange-500 dark:text-orange-300" />
+</Link>
             <Link
               href="/flight-statistics"
               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-110"
@@ -223,6 +237,23 @@ export function Header() {
               <span className="text-gray-700 dark:text-gray-300">Fullscreen Mode</span>
               <Maximize className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
+            <Link
+  href="/arrivals"
+  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+  onClick={() => setMenuOpen(false)}
+>
+  <span className="text-gray-700 dark:text-gray-300">Arrivals</span>
+  <FaPlaneArrival className="h-5 w-5 text-green-600 dark:text-green-300" />
+</Link>
+<Link
+  href="/departures"
+  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+  onClick={() => setMenuOpen(false)}
+>
+  <span className="text-gray-700 dark:text-gray-300">Departures</span>
+  <FaPlaneDeparture className="h-5 w-5 text-orange-500 dark:text-orange-300" />
+</Link>
+
 
             <Link
               href="/flight-statistics"

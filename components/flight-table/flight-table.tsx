@@ -292,6 +292,7 @@ const filteredArrivals = flights.arrivals
   .filter((flight) => isFlightRecent(flight.actual_out, flight.status))
   .filter((flight) => matchesSearch(flight, search));
 
+  
   if (error) {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950">
