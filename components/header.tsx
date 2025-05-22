@@ -237,22 +237,22 @@ export function Header() {
               <span className="text-gray-700 dark:text-gray-300">Fullscreen Mode</span>
               <Maximize className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
-            <Link
+            {/* <Link
   href="/arrivals"
   className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
   onClick={() => setMenuOpen(false)}
 >
   <span className="text-gray-700 dark:text-gray-300">Arrivals</span>
   <FaPlaneArrival className="h-5 w-5 text-green-600 dark:text-green-300" />
-</Link>
-<Link
+</Link> */}
+{/* <Link
   href="/departures"
   className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
   onClick={() => setMenuOpen(false)}
 >
   <span className="text-gray-700 dark:text-gray-300">Departures</span>
   <FaPlaneDeparture className="h-5 w-5 text-orange-500 dark:text-orange-300" />
-</Link>
+</Link> */}
 
 
             <Link
