@@ -17,6 +17,10 @@ export default function AboutPage() {
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             A modern flight information system for Tivat Airport (LYTV)
           </p>
+            {/* Unofficial build notice */}
+          <p className="mt-4 text-red-600 dark:text-red-400 font-semibold text-lg">
+            This is an <span className="underline">unofficial build</span>.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 mb-16">

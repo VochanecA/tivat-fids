@@ -355,7 +355,7 @@ useEffect(() => {
           <div className="flex justify-center">
             {displayFlight.status === 'Earlier' ? (
               <span 
-                className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-800 dark:text-blue-100 dark:border-blue-700 blink-earlier"
+                className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-800 dark:text-blue-50 dark:border-blue-800 blink-earlier"
               >
                 <AlertTriangle size={14} className="mr-1" />
                 {displayFlight.status}
