@@ -234,7 +234,7 @@ export default function ArrivalsTable() {
     <Clock />
   </div>
   {/* Centered h2 */}
-  <h2 className="absolute left-1/2 transform -translate-x-1/2 text-5xl  font-bold text-gray-800 dark:text-blue-300">
+  <h2 className="absolute left-1/2 transform -translate-x-1/2 text-2xl  font-bold text-gray-800 dark:text-blue-300">
     Arrivals :: Dolasci
   </h2>
 
