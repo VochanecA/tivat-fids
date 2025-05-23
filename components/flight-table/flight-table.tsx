@@ -99,7 +99,7 @@ function useBlink(status: string) {
 }
 
 // --- Mobile Card ---
-// --- Mobile Card ---
+
 function FlightCard({ flight }: { flight: Flight }) {
   const blinkClass = useBlink(flight.status);
   const statusClass = getStatusClass(flight.status);
