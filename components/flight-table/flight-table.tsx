@@ -99,6 +99,7 @@ function useBlink(status: string) {
 }
 
 // --- Mobile Card ---
+// --- Mobile Card ---
 function FlightCard({ flight }: { flight: Flight }) {
   const blinkClass = useBlink(flight.status);
   const statusClass = getStatusClass(flight.status);
@@ -123,6 +124,12 @@ function FlightCard({ flight }: { flight: Flight }) {
         .flight-card:hover {
           transform: translateY(-4px);
           box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        }
+        .rounded-dark-grey {
+          background-color: rgba(75, 85, 99, 0.25); /* Dark grey with transparency */
+          border-radius: 0.5rem; /* Rounded corners */
+          padding: 0.5rem; /* Padding inside the rounded rectangle */
+          margin: 0.12rem; /* Margin outside the rounded rectangle */
         }
       `}</style>
 
@@ -162,17 +169,17 @@ function FlightCard({ flight }: { flight: Flight }) {
 
         {/* Times Grid */}
         <div className="grid grid-cols-3 text-center text-sm mb-4">
-          <div>
+          <div className="rounded-dark-grey">
             <div className="text-gray-500 dark:text-gray-400 mb-1">Scheduled</div>
             <div className="font-semibold text-gray-800 dark:text-gray-200">{flight.scheduled_out}</div>
           </div>
-          <div>
+          <div className="rounded-dark-grey">
             <div className="text-gray-500 dark:text-gray-400 mb-1">Estimated</div>
             <div className={`font-semibold ${blinkClass} text-gray-800 dark:text-gray-200`}>
               {flight.estimated_out || '—'}
             </div>
           </div>
-          <div>
+          <div className="rounded-dark-grey">
             <div className="text-gray-500 dark:text-gray-400 mb-1">Actual</div>
             <div className="font-semibold text-gray-800 dark:text-gray-200">{flight.actual_out || '—'}</div>
           </div>
@@ -180,7 +187,7 @@ function FlightCard({ flight }: { flight: Flight }) {
 
         {/* Info Row with Pills */}
         <div className="flex justify-between items-center">
-          <div className="flex flex-col items-center">
+          <div className="">
             <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Terminal</div>
             {flight.Terminal ? (
               <div className={`px-3 py-1 rounded-full text-sm font-medium ${terminalClass}`}>
@@ -209,6 +216,8 @@ function FlightCard({ flight }: { flight: Flight }) {
     </>
   );
 }
+
+
 
 // --- Search Helper ---
 function matchesSearch(flight: Flight, search: string) {
