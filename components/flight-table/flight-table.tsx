@@ -112,16 +112,7 @@ function FlightCard({ flight }: { flight: Flight }) {
   return (
     <>
       <style>{`
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-        .blink-slow {
-          animation: blink 2s infinite;
-        }
-        .blink-fast {
-          animation: blink 0.4s infinite;
-        }
+    
         .flight-card {
           transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
@@ -417,7 +408,7 @@ const filteredArrivals = flights.arrivals
               Array.from({ length: 5 }).map((_, index) => (
                 <tr key={index} className="animate-pulse">
                   {/* Adjust skeleton columns based on activeTab */}
-                  {Array.from({ length: activeTab === 'departures' ? 8 : 6 }).map((__, colIndex) => (
+                  {Array.from({ length: activeTab === 'departures' ? 8 : 7 }).map((__, colIndex) => (
                     <td key={colIndex} className="px-4 py-4">
                       <div className="h-6 bg-gray-200 rounded dark:bg-gray-700 w-full"></div>
                     </td>

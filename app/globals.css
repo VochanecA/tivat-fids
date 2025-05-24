@@ -1,16 +1,18 @@
+/* Tailwind CSS Directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Variables for Theming */
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
 }
 
-/* Disable all CSS animations and transitions */
-html[data-battery-saver='on'] *, 
-html[data-battery-saver='on'] *::before, 
+/* Battery Saver Mode Styles */
+html[data-battery-saver='on'] *,
+html[data-battery-saver='on'] *::before,
 html[data-battery-saver='on'] *::after {
   animation-duration: 0s !important;
   animation-delay: 0s !important;
@@ -19,7 +21,7 @@ html[data-battery-saver='on'] *::after {
   scroll-behavior: auto !important;
 }
 
-
+/* Dark Theme Variables */
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -28,6 +30,7 @@ html[data-battery-saver='on'] *::after {
   }
 }
 
+/* Base Layer Styles */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -56,6 +59,7 @@ html[data-battery-saver='on'] *::after {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -82,11 +86,11 @@ html[data-battery-saver='on'] *::after {
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
-}
-@layer base {
+
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -97,4 +101,22 @@ html[data-battery-saver='on'] *::after {
     margin: 0;
     padding: 0;
   }
+}
+
+/* Animation Keyframes and Classes */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.blink-slow {
+  animation: blink 1.5s infinite ease-in-out !important;
+}
+
+.blink-fast {
+  animation: blink 0.8s infinite ease-in-out !important;
+}
+
+.blink-earlier {
+  animation: blink 1.2s infinite ease-in-out !important;
 }
