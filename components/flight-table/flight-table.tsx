@@ -39,7 +39,11 @@ const STATUS_DEPARTED = 'departed';
 const STATUS_ARRIVED = 'arrived';
 
 const thClassNames =
-  'px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400';
+  'px-4 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider dark:text-gray-400';
+
+// Narrower Terminal column class
+const thTerminalClassNames =
+  'px-2 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider dark:text-gray-400';
 
 const FlightRow = React.memo(OriginalFlightRow);
 
@@ -383,18 +387,26 @@ const filteredArrivals = flights.arrivals
               <th scope="col" className={thClassNames}>
                 Estimated
               </th>
-              <th scope="col" className={thClassNames}>
-                Actual
-              </th>
-              <th scope="col" className={thClassNames}>
+              {/* Hide Actual column only for departures */}
+              {activeTab === 'arrivals' && (
+                <th scope="col" className={thClassNames}>
+                  Actual
+                </th>
+              )}
+              <th scope="col" className={thTerminalClassNames}>
                 Terminal
               </th>
-              <th scope="col" className={thClassNames}>
-                Gate
-              </th>
-              <th scope="col" className={thClassNames}>
-                Check-in
-              </th>
+              {/* Show Gate and Check-in only for departures */}
+              {activeTab === 'departures' && (
+                <>
+                  <th scope="col" className={thClassNames}>
+                    Gate
+                  </th>
+                  <th scope="col" className={thClassNames}>
+                    Check-in
+                  </th>
+                </>
+              )}
               <th scope="col" className={thClassNames}>
                 Status
               </th>
@@ -404,7 +416,8 @@ const filteredArrivals = flights.arrivals
             {loading ? (
               Array.from({ length: 5 }).map((_, index) => (
                 <tr key={index} className="animate-pulse">
-                  {Array.from({ length: 9 }).map((__, colIndex) => (
+                  {/* Adjust skeleton columns based on activeTab */}
+                  {Array.from({ length: activeTab === 'departures' ? 8 : 6 }).map((__, colIndex) => (
                     <td key={colIndex} className="px-4 py-4">
                       <div className="h-6 bg-gray-200 rounded dark:bg-gray-700 w-full"></div>
                     </td>
@@ -424,7 +437,7 @@ const filteredArrivals = flights.arrivals
               ) : (
                 <tr>
                   <td
-                    colSpan={9}
+                    colSpan={8}
                     className="px-4 py-4 text-center text-gray-500 dark:text-gray-400"
                   >
                     No departures found.
@@ -443,7 +456,7 @@ const filteredArrivals = flights.arrivals
             ) : (
               <tr>
                 <td
-                  colSpan={9}
+                  colSpan={6}
                   className="px-4 py-4 text-center text-gray-500 dark:text-gray-400"
                 >
                   No arrivals found.

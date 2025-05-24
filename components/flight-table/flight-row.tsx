@@ -181,16 +181,16 @@ useEffect(() => {
       <style>{`
         @keyframes blink {
           0%, 100% { opacity: 1; }
-          50% { opacity: 0.1; }
+          50% { opacity: 0.3; }
         }
         .blink-slow {
-          animation: blink 1s infinite ease-in-out;
+          animation: blink 1.5s infinite ease-in-out !important;
         }
         .blink-fast {
-          animation: blink 0.6s infinite ease-in-out;
+          animation: blink 0.8s infinite ease-in-out !important;
         }
         .blink-earlier {
-          animation: blink 0.9s infinite ease-in-out;
+          animation: blink 1.2s infinite ease-in-out !important;
         }
         
         @media (max-width: 640px) {
@@ -259,6 +259,16 @@ useEffect(() => {
               >
                 {displayFlight.Kompanija}{displayFlight.ident}
               </a>
+              <br />
+              <a
+                href={`https://www.flightaware.com/live/flight/${displayFlight.KompanijaICAO}${displayFlight.ident}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 transition-colors cursor-pointer"
+                title="Track flight on FlightAware"
+              >
+                Track flight
+              </a>
             </div>
           </div>
         </td>
@@ -299,7 +309,8 @@ useEffect(() => {
           </div>
         </td>
 
-        <td className="py-4 px-4">
+        {/* Actual column - Hidden for departures on desktop */}
+        <td className={`py-4 px-4 ${activeTab === 'departures' ? 'hidden sm:hidden' : ''}`}>
           <div className="flex items-center">
             <ArrowRight size={16} className="mr-2 text-blue-500" />
             <div className="text-sm text-gray-700 dark:text-gray-300">
@@ -309,11 +320,11 @@ useEffect(() => {
           </div>
         </td>
 
-        {/* Terminal column */}
-        <td className="py-4 px-4">
+        {/* Terminal column - Made narrower */}
+        <td className="py-2 px-2">
           <div className="flex flex-col items-center justify-center">
             {displayFlight.Terminal ? (
-              <div className={`${terminalStyle} px-3 py-1 rounded-full text-sm font-medium flex items-center justify-center w-12`}>
+              <div className={`${terminalStyle} px-2 py-1 rounded-full text-xs font-medium flex items-center justify-center w-10`}>
                 {displayFlight.Terminal}
               </div>
             ) : (
@@ -322,33 +333,30 @@ useEffect(() => {
           </div>
         </td>
 
-        {/* Gate column */}
- <td className="py-4 px-4">
-  <div className="flex items-center justify-center">
-    <DoorClosed size={16} className="mr-1 text-blue-500 dark:text-blue-400" />
-    {displayFlight.gate ? (
-      <span className="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-900 dark:text-blue-100 dark:border-blue-700 transition-colors">
-        {displayFlight.gate}
-      </span>
-    ) : (
-      <span className="text-gray-400 dark:text-gray-600">-</span>
-    )}
-  </div>
-</td>
+        {/* Gate column - Hidden for arrivals on desktop */}
+        <td className={`py-4 px-4 ${activeTab === 'arrivals' ? 'hidden sm:hidden' : ''}`}>
+          <div className="flex items-center justify-center">
+            <DoorClosed size={16} className="mr-1 text-blue-500 dark:text-blue-400" />
+            {displayFlight.gate ? (
+              <span className="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-900 dark:text-blue-100 dark:border-blue-700 transition-colors">
+                {displayFlight.gate}
+              </span>
+            ) : (
+              <span className="text-gray-400 dark:text-gray-600">-</span>
+            )}
+          </div>
+        </td>
 
-
-        {/* Check-in column */}
-<td className="py-4 px-4 text-center">
-  {displayFlight.checkIn ? (
-    <span className="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-700 border border-green-200 dark:bg-green-900 dark:text-green-100 dark:border-green-700 transition-colors">
-      {displayFlight.checkIn}
-    </span>
-  ) : (
-    <span className="text-gray-400 dark:text-gray-600">-</span>
-  )}
-</td>
-
-
+        {/* Check-in column - Hidden for arrivals on desktop */}
+        <td className={`py-4 px-4 text-center ${activeTab === 'arrivals' ? 'hidden sm:hidden' : ''}`}>
+          {displayFlight.checkIn ? (
+            <span className="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-700 border border-green-200 dark:bg-green-900 dark:text-green-100 dark:border-green-700 transition-colors">
+              {displayFlight.checkIn}
+            </span>
+          ) : (
+            <span className="text-gray-400 dark:text-gray-600">-</span>
+          )}
+        </td>
 
         {/* Status column */}
         <td className="py-4 px-4">
@@ -362,7 +370,7 @@ useEffect(() => {
               </span>
             ) : (
               <span 
-                className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border ${statusConfig.bgClass} ${statusConfig.animation || ''}`}
+                className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium border ${statusConfig.bgClass} ${blinkClass}`}
               >
                 {displayFlight.status}
               </span>
