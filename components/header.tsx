@@ -1,4 +1,5 @@
-// Import necessary modules and components
+'use client';
+
 import { Logo } from './logo';
 import { ThemeToggle } from './ui/theme-toggle';
 import {
@@ -207,105 +208,107 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile menu with animation */}
-      <div className={`md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 ease-in-out ${menuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}>
-        <div className="container mx-auto px-4 py-3 space-y-3">
-          <button
-            onClick={() => {
-              window.location.reload();
-              setMenuOpen(false);
-            }}
-            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          >
-            <span className="text-gray-700 dark:text-gray-300">Refresh Data</span>
-            <RefreshCw className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-          </button>
-          <button
-            onClick={() => {
-              toggleFullscreen();
-              setMenuOpen(false);
-            }}
-            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          >
-            <span className="text-gray-700 dark:text-gray-300">Fullscreen Mode</span>
-            <Maximize className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-          </button>
-          <Link
-            href="/arrivals"
-            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            onClick={() => setMenuOpen(false)}
-          >
-            <span className="text-gray-700 dark:text-gray-300">Arrivals</span>
-            <FaPlaneArrival className="h-5 w-5 text-green-600 dark:text-green-300" />
-          </Link>
-          <Link
-            href="/departures"
-            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            onClick={() => setMenuOpen(false)}
-          >
-            <span className="text-gray-700 dark:text-gray-300">Departures</span>
-            <FaPlaneDeparture className="h-5 w-5 text-orange-500 dark:text-orange-300" />
-          </Link>
-          <Link
-            href="/flight-statistics"
-            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            onClick={() => setMenuOpen(false)}
-          >
-            <span className="text-gray-700 dark:text-gray-300">Flight Statistics</span>
-            <FaChartBar className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-          </Link>
-          <Link
-            href="/about"
-            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            onClick={() => setMenuOpen(false)}
-          >
-            <span className="text-gray-700 dark:text-gray-300">About</span>
-            <Info className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-          </Link>
-          <Link
-            href="/faq"
-            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            onClick={() => setMenuOpen(false)}
-          >
-            <span className="text-gray-700 dark:text-gray-300">FAQ</span>
-            <HelpCircle className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-          </Link>
-          <Link
-            href="/Tivat-FIDS.apk"
-            download
-            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            onClick={() => setMenuOpen(false)}
-            aria-label="Download APK for Android"
-          >
-            <span className="text-gray-700 dark:text-gray-300">Download APK for Android</span>
-            <Download className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-          </Link>
-          {/* Battery Saver Toggle */}
-          <button
-            onClick={() => {
-              toggleBatterySaver();
-              setMenuOpen(false);
-            }}
-            className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            aria-pressed={batterySaverOn}
-            aria-label="Toggle Battery Saver mode"
-          >
-            <span className="text-gray-700 dark:text-gray-300">
-              Battery Saver {batterySaverOn ? 'On' : 'Off'}
-            </span>
-            {batterySaverOn ? (
-              <BatteryCharging className="h-5 w-5 text-green-500" />
-            ) : (
-              <Battery className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-            )}
-          </button>
-          {/* Theme Toggle for Mobile */}
-          <div className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-            <span className="text-gray-700 dark:text-gray-300">{themeLabel}</span>
-            <ThemeToggle />
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 relative">
+          <div className="container mx-auto px-4 py-3 space-y-3">
+            <button
+              onClick={() => {
+                window.location.reload();
+                setMenuOpen(false);
+              }}
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <span className="text-gray-700 dark:text-gray-300">Refresh Data</span>
+              <RefreshCw className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+            </button>
+            <button
+              onClick={() => {
+                toggleFullscreen();
+                setMenuOpen(false);
+              }}
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+              <span className="text-gray-700 dark:text-gray-300">Fullscreen Mode</span>
+              <Maximize className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+            </button>
+            <Link
+              href="/arrivals"
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="text-gray-700 dark:text-gray-300">Arrivals</span>
+              <FaPlaneArrival className="h-5 w-5 text-green-600 dark:text-green-300" />
+            </Link>
+            <Link
+              href="/departures"
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="text-gray-700 dark:text-gray-300">Departures</span>
+              <FaPlaneDeparture className="h-5 w-5 text-orange-500 dark:text-orange-300" />
+            </Link>
+            <Link
+              href="/flight-statistics"
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="text-gray-700 dark:text-gray-300">Flight Statistics</span>
+              <FaChartBar className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+            </Link>
+            <Link
+              href="/about"
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="text-gray-700 dark:text-gray-300">About</span>
+              <Info className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+            </Link>
+            <Link
+              href="/faq"
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="text-gray-700 dark:text-gray-300">FAQ</span>
+              <HelpCircle className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+            </Link>
+            <Link
+              href="/Tivat-FIDS.apk"
+              download
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => setMenuOpen(false)}
+              aria-label="Download APK for Android"
+            >
+              <span className="text-gray-700 dark:text-gray-300">Download APK for Android</span>
+              <Download className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+            </Link>
+            {/* Battery Saver Toggle */}
+            <button
+              onClick={() => {
+                toggleBatterySaver();
+                setMenuOpen(false);
+              }}
+              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-pressed={batterySaverOn}
+              aria-label="Toggle Battery Saver mode"
+            >
+              <span className="text-gray-700 dark:text-gray-300">
+                Battery Saver {batterySaverOn ? 'On' : 'Off'}
+              </span>
+              {batterySaverOn ? (
+                <BatteryCharging className="h-5 w-5 text-green-500" />
+              ) : (
+                <Battery className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+              )}
+            </button>
+            {/* Theme Toggle for Mobile */}
+            <div className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <span className="text-gray-700 dark:text-gray-300">{themeLabel}</span>
+              <ThemeToggle />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </header>
   );
 }
