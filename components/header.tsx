@@ -17,31 +17,6 @@ export function Header() {
   // Battery Saver State
   const [batterySaverOn, setBatterySaverOn] = useState(false);
 
-  // Force re-render function for WebView theme issues
-  const forceWebViewRefresh = useCallback(() => {
-    // Force a reflow to ensure CSS variables are updated in WebView
-    if (typeof window !== 'undefined') {
-      // Method 1: Force reflow
-      document.body.style.display = 'none';
-      document.body.offsetHeight; // Trigger reflow
-      document.body.style.display = '';
-      
-      // Method 2: Add/remove a class to trigger re-render
-      document.documentElement.classList.add('theme-refresh');
-      setTimeout(() => {
-        document.documentElement.classList.remove('theme-refresh');
-      }, 10);
-      
-      // Method 3: For WebView, sometimes we need to force repaint
-      const isWebView = /wv/.test(navigator.userAgent);
-      if (isWebView) {
-        setTimeout(() => {
-          window.dispatchEvent(new Event('resize'));
-        }, 100);
-      }
-    }
-  }, []);
-
   useEffect(() => {
     const updateDateTime = () => {
       const now = new Date();
@@ -78,33 +53,11 @@ export function Header() {
       document.documentElement.setAttribute('data-battery-saver', 'on');
     }
 
-    // Listen for theme changes to force refresh in WebView
-    const handleThemeChange = () => {
-      setTimeout(() => {
-        forceWebViewRefresh();
-      }, 50);
-    };
-
-    // Listen for class changes on documentElement (theme changes)
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          handleThemeChange();
-        }
-      });
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class']
-    });
-
     return () => {
       clearInterval(interval);
       window.removeEventListener('scroll', handleScroll);
-      observer.disconnect();
     };
-  }, [forceWebViewRefresh]);
+  }, []);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -165,20 +118,20 @@ export function Header() {
             >
               <Maximize className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
-            <Link
-              href="/arrivals"
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-110"
-              aria-label="Arrivals"
-            >
-              <FaPlaneArrival className="h-5 w-5 text-green-600 dark:text-green-300" />
-            </Link>
-            <Link
-              href="/departures"
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-110"
-              aria-label="Departures"
-            >
-              <FaPlaneDeparture className="h-5 w-5 text-orange-500 dark:text-orange-300" />
-            </Link>
+<Link
+  href="/arrivals"
+  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-110"
+  aria-label="Arrivals"
+>
+  <FaPlaneArrival className="h-5 w-5 text-green-600 dark:text-green-300" />
+</Link>
+<Link
+  href="/departures"
+  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-110"
+  aria-label="Departures"
+>
+  <FaPlaneDeparture className="h-5 w-5 text-orange-500 dark:text-orange-300" />
+</Link>
             <Link
               href="/flight-statistics"
               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-110"
@@ -254,6 +207,14 @@ export function Header() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 relative">
+          {/* Close button */}
+          {/* <button
+            onClick={() => setMenuOpen(false)}
+            className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            aria-label="Close menu"
+          >
+            <X className="h-6 w-6 text-gray-700 dark:text-gray-300" />
+          </button> */}
           <div className="container mx-auto px-4 py-3 space-y-3">
             <button
               onClick={() => {
@@ -277,21 +238,22 @@ export function Header() {
               <Maximize className="h-5 w-5 text-gray-700 dark:text-gray-300" />
             </button>
             <Link
-              href="/arrivals"
-              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              onClick={() => setMenuOpen(false)}
-            >
-              <span className="text-gray-700 dark:text-gray-300">Arrivals</span>
-              <FaPlaneArrival className="h-5 w-5 text-green-600 dark:text-green-300" />
-            </Link>
-            <Link
-              href="/departures"
-              className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              onClick={() => setMenuOpen(false)}
-            >
-              <span className="text-gray-700 dark:text-gray-300">Departures</span>
-              <FaPlaneDeparture className="h-5 w-5 text-orange-500 dark:text-orange-300" />
-            </Link>
+  href="/arrivals"
+  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+  onClick={() => setMenuOpen(false)}
+>
+  <span className="text-gray-700 dark:text-gray-300">Arrivals</span>
+  <FaPlaneArrival className="h-5 w-5 text-green-600 dark:text-green-300" />
+</Link>
+<Link
+  href="/departures"
+  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+  onClick={() => setMenuOpen(false)}
+>
+  <span className="text-gray-700 dark:text-gray-300">Departures</span>
+  <FaPlaneDeparture className="h-5 w-5 text-orange-500 dark:text-orange-300" />
+</Link>
+
 
             <Link
               href="/flight-statistics"
