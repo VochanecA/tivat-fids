@@ -259,6 +259,7 @@ useEffect(() => {
               >
                 {displayFlight.Kompanija}{displayFlight.ident}
               </a>
+
               <br />
               <a
                 href={`https://www.flightaware.com/live/flight/${displayFlight.KompanijaICAO}${displayFlight.ident}`}

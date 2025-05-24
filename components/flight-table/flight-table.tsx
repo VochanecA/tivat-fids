@@ -108,12 +108,12 @@ function FlightCard({ flight }: { flight: Flight }) {
         <div className="flex items-center gap-3">
           <AirlineLogo name={flight.KompanijaNaziv} icao={flight.KompanijaICAO} />
           <div>
-            <div className="font-semibold text-base text-gray-800 dark:text-gray-100">{flight.KompanijaNaziv}</div>
+            <div className="font-sm text-base text-gray-800 dark:text-gray-100">{flight.KompanijaNaziv}</div>
             <a
               href={`https://www.flightaware.com/live/flight/${flight.KompanijaICAO}${flight.ident}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+              className="text-base font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
             >
               {flight.Kompanija}{flight.ident}
             </a>
@@ -129,28 +129,30 @@ function FlightCard({ flight }: { flight: Flight }) {
 
       <div className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white mb-3">
         {flight.TipLeta === 'O' ? <FaPlaneDeparture className="text-orange-500" /> : <FaPlaneArrival className="text-green-500" />}
-        <span>{flight.grad}</span>
-        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+        <span className="text-orange-500">{flight.grad}</span>
+        <span className="text-sm font-medium text-gray-500 dark:text-blue-400">
           ({flight.TipLeta === 'O' ? flight.destination.code : flight.origin.code})
         </span>
       </div>
 
-      <div className="grid grid-cols-3 text-center text-sm mb-4">
-        <div>
-          <div className="text-gray-500 dark:text-gray-400 mb-1">Scheduled</div>
-          <div className="font-semibold text-gray-800 dark:text-gray-200">{flight.scheduled_out}</div>
-        </div>
-        <div>
-          <div className="text-gray-500 dark:text-gray-400 mb-1">Estimated</div>
-          <div className={`font-semibold ${blinkClass} text-gray-800 dark:text-gray-200`}>
-            {flight.estimated_out || '—'}
-          </div>
-        </div>
-        <div>
-          <div className="text-gray-500 dark:text-gray-400 mb-1">Actual</div>
-          <div className="font-semibold text-gray-800 dark:text-gray-200">{flight.actual_out || '—'}</div>
-        </div>
-      </div>
+<div className="grid grid-cols-3 gap-4 text-center text-sm mb-4">
+  <div className="p-2 rounded-lg bg-blue-300 bg-opacity-30">
+    <div className="text-gray-500 dark:text-gray-50 mb-1">Scheduled</div>
+    <div className="font-semibold text-gray-800 dark:text-gray-200">{flight.scheduled_out}</div>
+  </div>
+  <div className="p-2 rounded-lg bg-teal-300 bg-opacity-30">
+    <div className="text-gray-500 dark:text-gray-50 mb-1">Estimated</div>
+    <div className={`font-semibold ${blinkClass} text-gray-800 dark:text-gray-200`}>
+      {flight.estimated_out || '—'}
+    </div>
+  </div>
+  <div className="p-2 rounded-lg bg-indigo-300 bg-opacity-30">
+    <div className=" text-gray-500 dark:text-gray-50 mb-1">Actual</div>
+    <div className="font-semibold text-gray-800 dark:text-gray-200">{flight.actual_out || '—'}</div>
+  </div>
+</div>
+
+
 
       <div className="flex justify-between items-center">
         <div className="flex flex-col items-center">

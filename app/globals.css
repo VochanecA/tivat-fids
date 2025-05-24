@@ -8,6 +8,10 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+/* globals.css */
+html, body {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
 /* Disable all CSS animations and transitions */
 html[data-battery-saver='on'] *, 
 html[data-battery-saver='on'] *::before, 

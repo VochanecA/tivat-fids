@@ -1,8 +1,8 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { ThemeProvider } from '@/hooks/useTheme';
-import WakeLock from '@/components/flight-table/WakeLock'; // adjust path as needed
+import { Providers } from './providers';
+import WakeLock from '@/components/flight-table/WakeLock';
 import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ['latin'] });
@@ -11,8 +11,11 @@ export const metadata: Metadata = {
   title: 'Tivat Airport - Flight Information',
   description: 'Real-time flight information for Tivat airport',
   manifest: '/manifest.json',
-  themeColor: '#f97316',
-  viewport: 'width=device-width, initial-scale=1', // <-- Add viewport here
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f97316' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
+  viewport: 'width=device-width, initial-scale=1',
   icons: [
     { rel: 'icon', url: '/favicon.ico' },
     { rel: 'icon', url: '/icon-192x192.png', sizes: '192x192' },
@@ -27,13 +30,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="h-full w-full">
-      <body className={`${inter.className} h-full w-full min-h-screen flex flex-col`}>
-        <ThemeProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} antialiased`}>
+        <Providers>
           <WakeLock />
-          <div className="flex-grow flex flex-col">{children}</div>
+          <div className="min-h-screen flex flex-col">
+            {children}
+          </div>
           <Analytics />
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );
