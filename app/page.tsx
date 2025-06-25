@@ -53,39 +53,51 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-t border-gray-200 dark:border-gray-800 py-4 px-6 text-sm text-gray-500 dark:text-gray-400">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
-          <div className="text-center w-full sm:w-auto flex items-center justify-center gap-2 text-gray-700 dark:text-gray-300 text-sm">
-            <FaClock className="text-blue-500" />
-            {isClient && latestUpdate ? (
-              <>
-                Latest update:{' '}
-                <time dateTime={latestUpdate.toISOString()}>
-                  {formatDateTime(latestUpdate)}
-                </time>
-              </>
-            ) : (
-              <>Loading latest update...</>
-            )}
-          </div>
-          <div className="text-center w-full sm:w-auto">
-            © {new Date().getFullYear()} Code by Alen. All rights reserved.
-          </div>
-        </div>
-        <div className="mt-6 flex flex-col items-center justify-center space-y-2">
-          <Image
-            src="/FA_Logo_RGB-Hex.png"
-            alt="FlightAware Logo"
-            width={120}
-            height={40}
-            priority
-            className="object-contain"
-          />
-          <p className="text-center text-gray-600 dark:text-gray-400 text-sm max-w-md">
-            Flight tracking powered by FlightAware — delivering reliable and real-time flight data.
-          </p>
-        </div>
-      </footer>
+<footer className="border-t border-gray-200 dark:border-gray-800 py-4 px-6 text-sm text-gray-500 dark:text-gray-400">
+  <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0">
+    <div className="text-center w-full sm:w-auto flex items-center justify-center gap-2 text-gray-700 dark:text-gray-300 text-sm">
+      <FaClock className="text-blue-500" />
+      {isClient && latestUpdate ? (
+        <>
+          Latest update:{' '}
+          <time dateTime={latestUpdate.toISOString()}>
+            {formatDateTime(latestUpdate)}
+          </time>
+        </>
+      ) : (
+        <>Loading latest update...</>
+      )}
+    </div>
+    <div className="text-center w-full sm:w-auto">
+      © {new Date().getFullYear()} Code by Alen. All rights reserved.
+    </div>
+  </div>
+  <div className="mt-6 flex flex-col items-center justify-center space-y-2">
+    <Image
+      src="/FA_Logo_RGB-Hex.png"
+      alt="FlightAware Logo"
+      width={120}
+      height={40}
+      priority
+      className="object-contain"
+    />
+    <p className="text-center text-gray-600 dark:text-gray-400 text-sm max-w-md">
+      Flight tracking powered by FlightAware — delivering reliable and real-time flight data.
+    </p>
+  </div>
+  {/* SEO Backlink */}
+  <div className="mt-4 text-center">
+    <a
+      href="https://tivat-rent-scooter.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 hover:underline font-medium"
+    >
+      Need transport in Tivat? Rent a scooter at tivat-rent-scooter.com
+    </a>
+  </div>
+</footer>
+
     </div>
   );
 }
